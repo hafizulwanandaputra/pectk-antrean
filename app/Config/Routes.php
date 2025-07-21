@@ -14,6 +14,7 @@ $routes->get('/(?i)logout', 'Auth::logout');
 // HOME
 $routes->get('/(?i)home', 'Home::index');
 $routes->get('/(?i)home/(?i)list_antrean', 'Home::list_antrean');
+$routes->get('/(?i)home/(?i)list_jaminan', 'Home::list_jaminan');
 $routes->get('/(?i)home/(?i)cetak_antrean', 'Home::cetak_antrean');
 
 // ANTREAN

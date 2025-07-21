@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class JaminanModel extends Model
 {
-    protected $table = 'master_jaminan';
+    protected $table = 'jaminan';
     protected $primaryKey = 'jaminanId';
     protected $useTimestamps = false;
     protected $allowedFields = [

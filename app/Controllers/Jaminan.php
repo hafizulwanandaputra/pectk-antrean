@@ -127,7 +127,7 @@ class Jaminan extends BaseController
             $validation = \Config\Services::validation();
             // Menetapkan aturan validasi dasar
             $validation->setRules([
-                'jaminanKode' => 'required|is_unique[master_jaminan.jaminanKode]|max_length[4]|alpha',
+                'jaminanKode' => 'required|is_unique[jaminan.jaminanKode]|max_length[4]|alpha',
                 'jaminanNama' => 'required',
                 'jaminanStatus' => 'required'
             ]);
@@ -225,7 +225,7 @@ class Jaminan extends BaseController
             ]);
             // Validasi hanya jika kode jaminan telah diubah
             if ($this->request->getPost('jaminanKode') != $this->request->getPost('originalJaminanKode')) {
-                $validation->setRule('jaminanKode', 'jaminanKode', 'required|is_unique[master_jaminan.jaminanKode]|max_length[4]|alpha'); // Pastikan kode jaminan unik
+                $validation->setRule('jaminanKode', 'jaminanKode', 'required|is_unique[jaminan.jaminanKode]|max_length[4]|alpha'); // Pastikan kode jaminan unik
             }
             // Memeriksa apakah validasi gagal
             if (!$this->validate($validation->getRules())) {
@@ -243,7 +243,7 @@ class Jaminan extends BaseController
 
             $jaminanId = $this->request->getPost('jaminanId');
 
-            $db->table('master_jaminan')->where('jaminanId', $jaminanId)->update($data);
+            $db->table('jaminan')->where('jaminanId', $jaminanId)->update($data);
             // Panggil WebSocket untuk update client
             $this->notify_clients();
             // Mengembalikan respons JSON sukses
@@ -265,7 +265,7 @@ class Jaminan extends BaseController
                 $this->JaminanModel->delete($id);
                 $db = db_connect(); // Menghubungkan ke database
                 // Mengatur ulang nilai Auto Increment
-                $db->query('ALTER TABLE `master_jaminan` auto_increment = 1');
+                $db->query('ALTER TABLE `jaminan` auto_increment = 1');
                 // Panggil WebSocket untuk update client
                 $this->notify_clients();
                 // Mengembalikan respons JSON sukses

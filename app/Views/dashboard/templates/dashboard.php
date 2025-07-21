@@ -637,12 +637,12 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
                         </li>
                         <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
                             <li class="nav-item">
-                                <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'pasien') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/pasien'); ?>">
-                                    <div class="d-flex align-items-start <?= ($activeSegment === 'pasien') ? 'text-white' : 'link-success' ?>">
+                                <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'antrean') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/antrean'); ?>">
+                                    <div class="d-flex align-items-start <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-success' ?>">
                                         <div style="min-width: 24px; max-width: 24px; text-align: center;">
                                             <i class="fa-solid fa-user-injured"></i>
                                         </div>
-                                        <div class="flex-fill mx-2 <?= ($activeSegment === 'pasien') ? 'text-white' : 'link-body-emphasis' ?>">
+                                        <div class="flex-fill mx-2 <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-body-emphasis' ?>">
                                             Antrean
                                         </div>
                                     </div>

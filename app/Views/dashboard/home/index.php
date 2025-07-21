@@ -99,7 +99,9 @@ $db = db_connect();
 <?= $this->endSection(); ?>
 <?= $this->section('javascript'); ?>
 <script>
-
+    $(document).ready(function() {
+        $('#loadingSpinner').hide();
+    })
 </script>
 <?= $this->endSection(); ?>
 <?= $this->section('chartjs'); ?>
@@ -223,105 +225,105 @@ $db = db_connect();
     <?php endif; ?>
 
     <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
-        var chart_antreanpiegraph = createChart(document.getElementById('antreanpiegraph').getContext('2d'), {
-            type: 'pie',
-            data: data_content_antreanpiegraph,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                locale: 'id-ID',
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom'
-                    },
-                    filler: {
-                        drawTime: 'beforeDraw'
-                    }
-                },
-                scale: {
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        })
-        var chart_antreankodegraph = createChart(document.getElementById('antreankodegraph').getContext('2d'), {
-            type: 'line',
-            data: data_content_antreankodegraph,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                locale: 'id-ID',
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Bulan'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Rawat Jalan'
-                        }
-                    }
-                },
-                scale: {
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        })
-        var chart_antreangraph = createChart(document.getElementById('antreangraph').getContext('2d'), {
-            type: 'line',
-            data: data_content_antreangraph,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                locale: 'id-ID',
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Bulan'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Rawat Jalan'
-                        }
-                    }
-                },
-                scale: {
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        })
+        // var chart_antreanpiegraph = createChart(document.getElementById('antreanpiegraph').getContext('2d'), {
+        //     type: 'pie',
+        //     data: data_content_antreanpiegraph,
+        //     options: {
+        //         responsive: true,
+        //         maintainAspectRatio: false,
+        //         locale: 'id-ID',
+        //         plugins: {
+        //             legend: {
+        //                 display: true,
+        //                 position: 'bottom'
+        //             },
+        //             filler: {
+        //                 drawTime: 'beforeDraw'
+        //             }
+        //         },
+        //         scale: {
+        //             ticks: {
+        //                 precision: 0
+        //             }
+        //         }
+        //     }
+        // })
+        // var chart_antreankodegraph = createChart(document.getElementById('antreankodegraph').getContext('2d'), {
+        //     type: 'line',
+        //     data: data_content_antreankodegraph,
+        //     options: {
+        //         responsive: true,
+        //         maintainAspectRatio: false,
+        //         locale: 'id-ID',
+        //         interaction: {
+        //             intersect: false,
+        //             mode: 'index',
+        //         },
+        //         plugins: {
+        //             legend: {
+        //                 display: false
+        //             }
+        //         },
+        //         scales: {
+        //             x: {
+        //                 title: {
+        //                     display: true,
+        //                     text: 'Bulan'
+        //                 }
+        //             },
+        //             y: {
+        //                 beginAtZero: true,
+        //                 title: {
+        //                     display: true,
+        //                     text: 'Total Rawat Jalan'
+        //                 }
+        //             }
+        //         },
+        //         scale: {
+        //             ticks: {
+        //                 precision: 0
+        //             }
+        //         }
+        //     }
+        // })
+        // var chart_antreangraph = createChart(document.getElementById('antreangraph').getContext('2d'), {
+        //     type: 'line',
+        //     data: data_content_antreangraph,
+        //     options: {
+        //         responsive: true,
+        //         maintainAspectRatio: false,
+        //         locale: 'id-ID',
+        //         interaction: {
+        //             intersect: false,
+        //             mode: 'index',
+        //         },
+        //         plugins: {
+        //             legend: {
+        //                 display: false
+        //             }
+        //         },
+        //         scales: {
+        //             x: {
+        //                 title: {
+        //                     display: true,
+        //                     text: 'Bulan'
+        //                 }
+        //             },
+        //             y: {
+        //                 beginAtZero: true,
+        //                 title: {
+        //                     display: true,
+        //                     text: 'Total Rawat Jalan'
+        //                 }
+        //             }
+        //         },
+        //         scale: {
+        //             ticks: {
+        //                 precision: 0
+        //             }
+        //         }
+        //     }
+        // })
     <?php endif; ?>
 
     // Initial setup

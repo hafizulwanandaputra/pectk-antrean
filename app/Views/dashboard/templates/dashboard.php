@@ -640,7 +640,7 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
                                 <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'antrean') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/antrean'); ?>">
                                     <div class="d-flex align-items-start <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-success' ?>">
                                         <div style="min-width: 24px; max-width: 24px; text-align: center;">
-                                            <i class="fa-solid fa-user-injured"></i>
+                                            <i class="fa-solid fa-user-large"></i>
                                         </div>
                                         <div class="flex-fill mx-2 <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-body-emphasis' ?>">
                                             Antrean

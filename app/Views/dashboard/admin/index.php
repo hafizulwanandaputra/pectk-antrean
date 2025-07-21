@@ -151,10 +151,7 @@
                             <option value="" disabled selected>-- Pilih Jenis Pengguna --</option>
                             <option value="Admin">Admin</option>
                             <option value="Admisi">Admisi</option>
-                            <option value="Perawat">Perawat</option>
-                            <option value="Apoteker">Apoteker</option>
-                            <option value="Dokter">Dokter</option>
-                            <option value="Kasir">Kasir</option>
+                            <option value="Satpam">Satpam</option>
                         </select>
                         <label for="role">Jenis Pengguna<span class="text-danger">*</span></label>
                         <div class="invalid-feedback"></div>

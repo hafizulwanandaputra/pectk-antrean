@@ -21,7 +21,7 @@ $routes->get('/(?i)home/(?i)cetak_antrean', 'Home::cetak_antrean');
 $routes->get('/(?i)antrean', 'Antrean::index');
 $routes->get('/(?i)antrean/(?i)list_antrean', 'Antrean::list_antrean');
 $routes->post('/(?i)antrean/(?i)panggil_antrean', 'Antrean::panggil_antrean');
-$routes->delete('/(?i)antrean/(?i)hapus_antrean', 'Antrean::hapus_antrean');
+$routes->post('/(?i)antrean/(?i)atur_status', 'Antrean::atur_status');
 
 // JAMINAN
 $routes->get('/(?i)jaminan', 'Jaminan::index');

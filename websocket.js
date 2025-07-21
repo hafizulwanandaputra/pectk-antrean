@@ -1,8 +1,8 @@
 const WebSocket = require("ws");
 const express = require("express");
 
-const WS_PORT = 8090; // WebSocket di port 8090
-const HTTP_PORT = 3000; // HTTP untuk menerima perintah refresh
+const WS_PORT = 8095; // WebSocket di port 8095
+const HTTP_PORT = 3010; // HTTP untuk menerima perintah refresh
 const PING_INTERVAL = 30000; // Kirim ping setiap 30 detik
 
 // --------------------------
@@ -82,8 +82,8 @@ app.post("/notify", (req, res) => {
 
   if (action === "update") {
     broadcast({ update: true });
-  } else if (action === "delete") {
-    broadcast({ delete: true });
+  } else if (action === "call") {
+    broadcast({ call: true });
   } else {
     return res.status(400).json({ status: "Invalid action" });
   }

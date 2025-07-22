@@ -351,40 +351,33 @@ class Home extends BaseController
     {
         // Memeriksa peran pengguna, hanya 'Satpam' yang diizinkan
         if (session()->get('role') == 'Satpam') {
-            // Validasi input
-            $validation = \Config\Services::validation();
-            $validation->setRules([
-                'kode_antrean' => 'required',
-            ]);
+            // Ambil parameter jaminan dari URL
+            $jaminan = strtoupper($this->request->getVar('jaminan'));
 
-            if (!$this->validate($validation->getRules())) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => NULL,
-                    'errors' => $validation->getErrors()
-                ]);
+            // Tetapkan kode_antrean berdasarkan jaminan
+            switch ($jaminan) {
+                case 'UMUM':
+                    $kode_antrean = 'U';
+                    $nama_jaminan = 'UMUM';
+                    break;
+                case 'BPJS KESEHATAN':
+                    $kode_antrean = 'B';
+                    $nama_jaminan = 'BPJS KESEHATAN';
+                    break;
+                case 'ASURANSI':
+                    $kode_antrean = 'A';
+                    $nama_jaminan = 'ASURANSI';
+                    break;
+                default:
+                    return $this->response->setJSON([
+                        'success' => false,
+                        'message' => 'Jaminan tidak dikenali: harus UMUM, BPJS KESEHATAN, atau ASURANSI',
+                    ]);
             }
 
             $db = db_connect();
-            $kode_input = $this->request->getPost('kode_antrean');
 
-            // Ambil data jaminan berdasarkan input kode
-            $jaminanData = $db->table('jaminan')
-                ->where('jaminanKode', $kode_input)
-                ->get()
-                ->getRow();
-
-            if (!$jaminanData) {
-                return $this->response->setJSON([
-                    'success' => false,
-                    'message' => 'Jaminan tidak ditemukan'
-                ]);
-            }
-
-            // Ambil kode antrean dari data jaminan
-            $kode_antrean = $jaminanData->jaminanAntrian;
-
-            // Ambil nomor antrean terakhir berdasarkan kode_antrean (bukan kode_input)
+            // Ambil nomor antrean terakhir berdasarkan kode_antrean
             $lastQueue = $db->table('antrean')
                 ->select('RIGHT(nomor_antrean, 3) AS last_number')
                 ->where('kode_antrean', $kode_antrean)
@@ -399,6 +392,7 @@ class Home extends BaseController
             $nomor_antrean = str_pad($queueIncrement, 3, '0', STR_PAD_LEFT);
 
             $data = [
+                'nama_jaminan' => $nama_jaminan,
                 'kode_antrean' => $kode_antrean,
                 'nomor_antrean' => $nomor_antrean,
                 'satpam' => session()->get('fullname'),
@@ -406,11 +400,7 @@ class Home extends BaseController
             ];
 
             $this->AntreanModel->insert($data);
-
-            // Ambil ID terakhir yang baru saja dimasukkan
             $insertedId = $this->AntreanModel->insertID();
-
-            // Ambil kembali data dari database berdasarkan ID
             $insertedRow = $this->AntreanModel->find($insertedId);
 
             $this->notify_clients('update');
@@ -421,7 +411,7 @@ class Home extends BaseController
                 'data' => [
                     'id_antrean' => $insertedId,
                     'antrean' => $kode_antrean . '-' . $nomor_antrean,
-                    'nama_jaminan' => $jaminanData->jaminanNama,
+                    'nama_jaminan' => $nama_jaminan,
                     'tanggal_antrean' => $insertedRow['tanggal_antrean']
                 ]
             ]);
@@ -429,6 +419,7 @@ class Home extends BaseController
             throw PageNotFoundException::forPageNotFound();
         }
     }
+
 
     public function notify_clients()
     {

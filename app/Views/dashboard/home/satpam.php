@@ -8,6 +8,10 @@ $db = db_connect();
         --bs-aspect-ratio: 33%;
     }
 
+    #img_bpjs {
+        color: inherit;
+    }
+
     @media (max-width: 991.98px) {
         .ratio-onecol {
             --bs-aspect-ratio: 75%;
@@ -35,23 +39,43 @@ $db = db_connect();
                 </span>
             </div>
             <hr>
-            <h4>Selamat Datang di</h4>
-            <h1>KLINIK UTAMA MATA<br>PADANG EYE CENTER TELUK KUANTAN</h1>
-            <h4><em>Melayani dengan Hati</em></h4>
+            <h4><strong>Selamat Datang di Klinik Utama Mata Padang Eye Center Teluk Kuantan</strong></h4>
+            <h6><em>Melayani dengan Hati</em></h6>
             <hr>
             <div class="my-4">
                 <h4>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h4>
             </div>
         </div>
-        <form class="mb-3" id="form_antrean">
-            <select class="form-select form-select-lg rounded-4" id="kode_antrean" name="kode_antrean">
-                <option selected disabled value="">Pilih Jaminan</option>
-            </select>
-            <div class="invalid-feedback"></div>
-            <div class="d-grid gap-2 mt-3">
-                <button type="submit" class="btn btn-primary bg-gradient btn-lg rounded-4" id="submit_btn">Buat Nomor Antrean</button>
+        <div class="mb-3" id="form_antrean">
+            <div class="row row-cols-1 row-cols-lg-3 g-2">
+                <div class="col">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
+                            <div style="font-size: 3em;"><i class="fa-solid fa-users"></i></div>
+                            <div class="fs-4 fw-bold">UMUM</div>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
+                            <div style="font-size: 3em;">
+                                <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
+                            </div>
+                            <div class="fs-4 fw-bold">BPJS KESEHATAN</div>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
+                            <div style="font-size: 3em;"><i class="fa-solid fa-user-shield"></i></div>
+                            <div class="fs-4 fw-bold">ASURANSI</div>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
         <div class="alert alert-success text-center rounded-top-4 rounded-bottom-5" role="alert" id="antrean_sukses" style="display: none;">
             <h4 class="alert-heading">Nomor antrean berhasil dibuat!</h4>
             <p class="mb-0">Nomor antrean Anda adalah:</p>

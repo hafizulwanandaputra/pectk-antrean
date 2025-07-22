@@ -132,7 +132,11 @@ class AuthFilter implements FilterInterface
             $url = session()->get('url');
             if ($url == base_url('home')) {
                 if (current_url() != base_url()) {
-                    session()->setFlashdata('msg', 'Berhasil masuk!');
+                    if (session()->get('role' == "Satpam")) {
+                        session()->setFlashdata('msg', 'Berhasil masuk!<br>' . $txtGreeting . ', ' . session()->get('fullname') . '!');
+                    } else {
+                        session()->setFlashdata('msg', 'Berhasil masuk!');
+                    }
                 }
                 return redirect()->to($url);
             } else {

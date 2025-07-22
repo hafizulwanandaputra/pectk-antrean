@@ -2,306 +2,389 @@
 
 namespace App\Controllers;
 
+use App\Models\AntreanModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
+
 class Home extends BaseController
 {
+    protected $AntreanModel;
+    public function __construct()
+    {
+        $this->AntreanModel = new AntreanModel();
+    }
     public function index()
     {
-        // GREETINGS
-        $seasonalGreetingA = array(); // Array untuk menyimpan ucapan musiman
-        $seasonalGreetingA[] = array('dayBegin' => 30, 'monthBegin' => 12, 'dayEnd' => 31, 'monthEnd' => 12, 'text' => 'Selamat Tahun Baru'); // Ucapan untuk Tahun Baru
-        $seasonalGreetingA[] = array('dayBegin' => 1, 'monthBegin' => 1, 'dayEnd' => 2, 'monthEnd' => 1, 'text' => 'Selamat Tahun Baru'); // Ucapan untuk hari pertama Tahun Baru
+        if (session()->get('role' != "Satpam")) {
+            // GREETINGS
+            $seasonalGreetingA = array(); // Array untuk menyimpan ucapan musiman
+            $seasonalGreetingA[] = array('dayBegin' => 30, 'monthBegin' => 12, 'dayEnd' => 31, 'monthEnd' => 12, 'text' => 'Selamat Tahun Baru'); // Ucapan untuk Tahun Baru
+            $seasonalGreetingA[] = array('dayBegin' => 1, 'monthBegin' => 1, 'dayEnd' => 2, 'monthEnd' => 1, 'text' => 'Selamat Tahun Baru'); // Ucapan untuk hari pertama Tahun Baru
 
-        $timeGreetingA = array(); // Array untuk menyimpan ucapan berdasarkan waktu
-        $timeGreetingA[] = array('timeBegin' => 0, 'timeEnd' => 5, 'text' => 'Selamat Malam'); // Ucapan malam
-        $timeGreetingA[] = array('timeBegin' => 5, 'timeEnd' => 11, 'text' => 'Selamat Pagi'); // Ucapan pagi
-        $timeGreetingA[] = array('timeBegin' => 11, 'timeEnd' => 16, 'text' => 'Selamat Siang'); // Ucapan siang
-        $timeGreetingA[] = array('timeBegin' => 16, 'timeEnd' => 19, 'text' => 'Selamat Sore'); // Ucapan sore
-        $timeGreetingA[] = array('timeBegin' => 19, 'timeEnd' => 24, 'text' => 'Selamat Malam'); // Ucapan malam
+            $timeGreetingA = array(); // Array untuk menyimpan ucapan berdasarkan waktu
+            $timeGreetingA[] = array('timeBegin' => 0, 'timeEnd' => 5, 'text' => 'Selamat Malam'); // Ucapan malam
+            $timeGreetingA[] = array('timeBegin' => 5, 'timeEnd' => 11, 'text' => 'Selamat Pagi'); // Ucapan pagi
+            $timeGreetingA[] = array('timeBegin' => 11, 'timeEnd' => 16, 'text' => 'Selamat Siang'); // Ucapan siang
+            $timeGreetingA[] = array('timeBegin' => 16, 'timeEnd' => 19, 'text' => 'Selamat Sore'); // Ucapan sore
+            $timeGreetingA[] = array('timeBegin' => 19, 'timeEnd' => 24, 'text' => 'Selamat Malam'); // Ucapan malam
 
-        $standardGreetingA = array(); // Array untuk menyimpan ucapan standar
-        $standardGreetingA[] = array('text' => 'Halo'); // Ucapan standar 1
-        $standardGreetingA[] = array('text' => 'Hai'); // Ucapan standar 2
+            $standardGreetingA = array(); // Array untuk menyimpan ucapan standar
+            $standardGreetingA[] = array('text' => 'Halo'); // Ucapan standar 1
+            $standardGreetingA[] = array('text' => 'Hai'); // Ucapan standar 2
 
-        $txtGreeting = ''; // Variabel untuk menyimpan ucapan yang akan ditampilkan
+            $txtGreeting = ''; // Variabel untuk menyimpan ucapan yang akan ditampilkan
 
-        // Mendapatkan tanggal dan bulan saat ini
-        $d = (int)date('d');
-        $m = (int)date('m');
+            // Mendapatkan tanggal dan bulan saat ini
+            $d = (int)date('d');
+            $m = (int)date('m');
 
-        // Memeriksa apakah ada ucapan musiman yang cocok dengan tanggal saat ini
-        if ($txtGreeting == '')
-            if (count($seasonalGreetingA) > 0)
-                foreach ($seasonalGreetingA as $sgA) {
-                    $d1 = $sgA['dayBegin']; // Hari mulai ucapan
-                    $m1 = $sgA['monthBegin']; // Bulan mulai ucapan
+            // Memeriksa apakah ada ucapan musiman yang cocok dengan tanggal saat ini
+            if ($txtGreeting == '')
+                if (count($seasonalGreetingA) > 0)
+                    foreach ($seasonalGreetingA as $sgA) {
+                        $d1 = $sgA['dayBegin']; // Hari mulai ucapan
+                        $m1 = $sgA['monthBegin']; // Bulan mulai ucapan
 
-                    $d2 = $sgA['dayEnd']; // Hari akhir ucapan
-                    $m2 = $sgA['monthEnd']; // Bulan akhir ucapan
+                        $d2 = $sgA['dayEnd']; // Hari akhir ucapan
+                        $m2 = $sgA['monthEnd']; // Bulan akhir ucapan
 
-                    // Memeriksa apakah tanggal saat ini berada dalam rentang ucapan musiman
-                    if ($m >= $m1 and $m <= $m2)
-                        if ($d >= $d1 and $d <= $d2)
-                            $txtGreeting = $sgA['text']; // Menyimpan ucapan musiman yang cocok
-                }
-
-        // Mendapatkan waktu saat ini
-        $time = (int)date('H');
-        // Memeriksa apakah ada ucapan berdasarkan waktu yang cocok dengan waktu saat ini
-        if ($txtGreeting == '')
-            if (count($timeGreetingA) > 0)
-                foreach ($timeGreetingA as $tgA) {
-                    // Memeriksa apakah waktu saat ini berada dalam rentang ucapan berdasarkan waktu
-                    if ($time >= $tgA['timeBegin'] and $time <= $tgA['timeEnd']) {
-                        $txtGreeting = $tgA['text']; // Menyimpan ucapan berdasarkan waktu yang cocok
-                        break; // Keluar dari loop setelah menemukan ucapan
+                        // Memeriksa apakah tanggal saat ini berada dalam rentang ucapan musiman
+                        if ($m >= $m1 and $m <= $m2)
+                            if ($d >= $d1 and $d <= $d2)
+                                $txtGreeting = $sgA['text']; // Menyimpan ucapan musiman yang cocok
                     }
+
+            // Mendapatkan waktu saat ini
+            $time = (int)date('H');
+            // Memeriksa apakah ada ucapan berdasarkan waktu yang cocok dengan waktu saat ini
+            if ($txtGreeting == '')
+                if (count($timeGreetingA) > 0)
+                    foreach ($timeGreetingA as $tgA) {
+                        // Memeriksa apakah waktu saat ini berada dalam rentang ucapan berdasarkan waktu
+                        if ($time >= $tgA['timeBegin'] and $time <= $tgA['timeEnd']) {
+                            $txtGreeting = $tgA['text']; // Menyimpan ucapan berdasarkan waktu yang cocok
+                            break; // Keluar dari loop setelah menemukan ucapan
+                        }
+                    }
+
+            // Jika tidak ada ucapan musiman atau waktu yang cocok, memilih ucapan standar secara acak
+            if ($txtGreeting == '')
+                if (count($standardGreetingA) > 0) {
+                    $ind = rand(0, count($standardGreetingA) - 1); // Memilih indeks acak dari ucapan standar
+                    if (isset($standardGreetingA[$ind])) $txtGreeting = $standardGreetingA[$ind]['text']; // Menyimpan ucapan standar yang dipilih
+                }
+            // END GREETINGS
+
+            // Menghubungkan ke database
+            $db = db_connect();
+            // Mendapatkan tabel-tabel yang diperlukan
+            $antrean = $db->table('antrean');
+            $user = $db->table('user');
+            $user_sessions = $db->table('user_sessions');
+
+
+            // Menghitung total data dari setiap tabel
+            $antreanpiegraph = $antrean->select('kode_antrean, COUNT(*) AS total_antrean')
+                ->orderBy('kode_antrean', 'ASC')
+                ->groupBy('kode_antrean')
+                ->get();
+            $antreangraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, COUNT(*) AS total_antrean')
+                ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m")')
+                ->get();
+            $antreankodegraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, kode_antrean, COUNT(*) AS total_antrean')
+                ->orderBy('kode_antrean', 'ASC')
+                ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m"), kode_antrean')
+                ->get()
+                ->getResultArray();
+
+            // Inisialisasi array untuk labels (bulan unik) dan datasets
+            $labels_antreankode = [];
+            $data_per_kode_antreanl = [];
+
+            // Proses data hasil query
+            foreach ($antreankodegraph as $row) {
+                // Tambahkan bulan ke array labels jika belum ada
+                if (!in_array($row['bulan'], $labels_antreankode)) {
+                    $labels_antreankode[] = $row['bulan'];
                 }
 
-        // Jika tidak ada ucapan musiman atau waktu yang cocok, memilih ucapan standar secara acak
-        if ($txtGreeting == '')
-            if (count($standardGreetingA) > 0) {
-                $ind = rand(0, count($standardGreetingA) - 1); // Memilih indeks acak dari ucapan standar
-                if (isset($standardGreetingA[$ind])) $txtGreeting = $standardGreetingA[$ind]['text']; // Menyimpan ucapan standar yang dipilih
-            }
-        // END GREETINGS
-
-        // Menghubungkan ke database
-        $db = db_connect();
-        // Mendapatkan tabel-tabel yang diperlukan
-        $antrean = $db->table('antrean');
-        $user = $db->table('user');
-        $user_sessions = $db->table('user_sessions');
-
-
-        // Menghitung total data dari setiap tabel
-        $antreanpiegraph = $antrean->select('kode_antrean, COUNT(*) AS total_antrean')
-            ->orderBy('kode_antrean', 'ASC')
-            ->groupBy('kode_antrean')
-            ->get();
-        $antreangraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, COUNT(*) AS total_antrean')
-            ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m")')
-            ->get();
-        $antreankodegraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, kode_antrean, COUNT(*) AS total_antrean')
-            ->orderBy('kode_antrean', 'ASC')
-            ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m"), kode_antrean')
-            ->get()
-            ->getResultArray();
-
-        // Inisialisasi array untuk labels (bulan unik) dan datasets
-        $labels_antreankode = [];
-        $data_per_kode_antreanl = [];
-
-        // Proses data hasil query
-        foreach ($antreankodegraph as $row) {
-            // Tambahkan bulan ke array labels jika belum ada
-            if (!in_array($row['bulan'], $labels_antreankode)) {
-                $labels_antreankode[] = $row['bulan'];
+                // Atur data rawat jalan per dokter
+                $data_per_kode_antreanl[$row['dokter']][$row['bulan']] = $row['total_antrean'];
             }
 
-            // Atur data rawat jalan per dokter
-            $data_per_kode_antreanl[$row['dokter']][$row['bulan']] = $row['total_antrean'];
-        }
+            // Urutkan labels secara kronologis
+            sort($labels_antreankode);
 
-        // Urutkan labels secara kronologis
-        sort($labels_antreankode);
+            // Siapkan struktur data untuk Chart.js
+            $datasets_antreankode = [];
+            foreach ($data_per_kode_antreanl as $kode => $data_bulan) {
+                $dataset = [
+                    'label' => $kode,
+                    'pointStyle' => 'circle',
+                    'pointRadius' => 6,
+                    'pointHoverRadius' => 12,
+                    'fill' => false,
+                    'data' => []
+                ];
 
-        // Siapkan struktur data untuk Chart.js
-        $datasets_antreankode = [];
-        foreach ($data_per_kode_antreanl as $kode => $data_bulan) {
-            $dataset = [
-                'label' => $kode,
-                'pointStyle' => 'circle',
-                'pointRadius' => 6,
-                'pointHoverRadius' => 12,
-                'fill' => false,
-                'data' => []
+                // Isi data sesuai urutan bulan di labels
+                foreach ($labels_antreankode as $bulan) {
+                    // Gunakan nilai rawat jalan jika ada, atau 0 jika tidak ada data untuk bulan tersebut
+                    $dataset['data'][] = $data_bulan[$bulan] ?? 0;
+                }
+
+                $datasets_antreankode[] = $dataset;
+            }
+
+            $total_user = $user->countAllResults(); // Total pengguna
+            $total_user_inactive = $user->where('active', 0)->countAllResults(); // Total pengguna nonaktif
+            $total_user_active = $user->where('active', 1)->countAllResults(); // Total pengguna aktif
+
+            $currentDateTime = date('Y-m-d H:i:s');
+            $total_sessions = $user_sessions->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi
+            $total_sessions_expired = $user_sessions->where('expires_at <', $currentDateTime)->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi kedaluwarsa
+            $total_sessions_active = $user_sessions->where('expires_at >=', $currentDateTime)->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi aktif
+
+            // Menyusun data untuk ditampilkan di view
+            $data = [
+                'antreanpiegraph' => $antreanpiegraph,
+                'labels_antreankode' => json_encode($labels_antreankode),
+                'datasets_antreankode' => json_encode($datasets_antreankode),
+                'antreangraph' => $antreangraph,
+                'total_user' => $total_user,
+                'total_user_inactive' => $total_user_inactive,
+                'total_user_active' => $total_user_active,
+                'total_sessions' => $total_sessions,
+                'total_sessions_expired' => $total_sessions_expired,
+                'total_sessions_active' => $total_sessions_active,
+                'txtgreeting' => $txtGreeting, // Ucapan yang ditentukan sebelumnya
+                'title' => 'Beranda - ' . $this->systemName, // Judul halaman
+                'headertitle' => 'Beranda', // Judul header
+                'agent' => $this->request->getUserAgent() // Mendapatkan user agent dari request
             ];
 
-            // Isi data sesuai urutan bulan di labels
-            foreach ($labels_antreankode as $bulan) {
-                // Gunakan nilai rawat jalan jika ada, atau 0 jika tidak ada data untuk bulan tersebut
-                $dataset['data'][] = $data_bulan[$bulan] ?? 0;
-            }
+            // Mengembalikan tampilan beranda dengan data yang telah disiapkan
+            return view('dashboard/home/index', $data);
+        } else {
+            // Menyusun data untuk ditampilkan di view
+            $data = [
+                'title' => 'Beranda - ' . $this->systemName, // Judul halaman
+                'headertitle' => 'Beranda', // Judul header
+                'agent' => $this->request->getUserAgent() // Mendapatkan user agent dari request
+            ];
 
-            $datasets_antreankode[] = $dataset;
+            // Mengembalikan tampilan beranda dengan data yang telah disiapkan
+            return view('dashboard/home/satpam', $data);
         }
-
-        $total_user = $user->countAllResults(); // Total pengguna
-        $total_user_inactive = $user->where('active', 0)->countAllResults(); // Total pengguna nonaktif
-        $total_user_active = $user->where('active', 1)->countAllResults(); // Total pengguna aktif
-
-        $currentDateTime = date('Y-m-d H:i:s');
-        $total_sessions = $user_sessions->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi
-        $total_sessions_expired = $user_sessions->where('expires_at <', $currentDateTime)->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi kedaluwarsa
-        $total_sessions_active = $user_sessions->where('expires_at >=', $currentDateTime)->where('session_token !=', session()->get('session_token'))->countAllResults(); // Total sesi aktif
-
-        // Menyusun data untuk ditampilkan di view
-        $data = [
-            'antreanpiegraph' => $antreanpiegraph,
-            'labels_antreankode' => json_encode($labels_antreankode),
-            'datasets_antreankode' => json_encode($datasets_antreankode),
-            'antreangraph' => $antreangraph,
-            'total_user' => $total_user,
-            'total_user_inactive' => $total_user_inactive,
-            'total_user_active' => $total_user_active,
-            'total_sessions' => $total_sessions,
-            'total_sessions_expired' => $total_sessions_expired,
-            'total_sessions_active' => $total_sessions_active,
-            'txtgreeting' => $txtGreeting, // Ucapan yang ditentukan sebelumnya
-            'title' => 'Beranda - ' . $this->systemName, // Judul halaman
-            'headertitle' => 'Beranda', // Judul header
-            'agent' => $this->request->getUserAgent() // Mendapatkan user agent dari request
-        ];
-
-        // Mengembalikan tampilan beranda dengan data yang telah disiapkan
-        return view('dashboard/home/index', $data);
     }
 
-    public function icd_x()
+    public function list_jaminan()
     {
-        if (session()->get('role') == "Admin" || session()->get('role') == "Dokter" || session()->get('role') == "Perawat" || session()->get('role') == "Admisi") {
+        // Memeriksa peran pengguna, hanya 'Admin' atau 'Admisi' yang diizinkan
+        if (session()->get('role') == 'Satpam') {
+            // Mengambil jaminan dari tabel master jaminan
             $db = db_connect();
-            $bulan = $this->request->getGet('bulan');
+            $masterjaminan = $db->table('jaminan')
+                ->where('jaminanStatus', 'AKTIF')
+                ->get()->getResultArray();
 
-            if (!$bulan) {
-                return $this->response->setStatusCode(400)->setJSON([
-                    'error' => 'Silakan masukkan bulan.'
-                ]);
+            // Menyiapkan array opsi untuk dikirim dalam respon
+            $options = [];
+            // Menyusun opsi dari data pengguna yang diterima
+            foreach ($masterjaminan as $jaminan) {
+                // Menambahkan opsi ke dalam array
+                $options[] = [
+                    'value'  => $jaminan['jaminanKode'], // Teks untuk opsi
+                    'text'  => $jaminan['jaminanNama'] // Teks untuk opsi
+                ];
             }
 
-            $limit = $this->request->getGet('limit');
-            $offset = $this->request->getGet('offset');
-            $startNumber = $offset + 1;
-
-            $icdx_bulanan_subquery = "
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icdx_kode_1 AS icdx_kode FROM medrec_assesment WHERE icdx_kode_1 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icdx_kode_2 AS icdx_kode FROM medrec_assesment WHERE icdx_kode_2 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icdx_kode_3 AS icdx_kode FROM medrec_assesment WHERE icdx_kode_3 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icdx_kode_4 AS icdx_kode FROM medrec_assesment WHERE icdx_kode_4 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icdx_kode_5 AS icdx_kode FROM medrec_assesment WHERE icdx_kode_5 IS NOT NULL
-    ";
-
-            $query = "
-        SELECT 
-            icdx_data.bulan, 
-            icdx_data.icdx_kode, 
-            icd_x.icdNamaInggris AS icdx_nama,
-            COUNT(*) AS total_icdx 
-        FROM ({$icdx_bulanan_subquery}) AS icdx_data 
-        JOIN icd_x ON icdx_data.icdx_kode = icd_x.icdKode
-        WHERE icdx_data.bulan LIKE '" . $db->escapeLikeString($bulan) . "%' 
-    ";
-
-            $query .= " GROUP BY icdx_data.bulan, icdx_data.icdx_kode, icd_x.icdNamaInggris ";
-            $query .= " ORDER BY icdx_data.bulan DESC, total_icdx DESC ";
-            $query .= " LIMIT {$limit} OFFSET {$offset} ";
-
-            $icdx_bulanan = $db->query($query)->getResultArray();
-
-            foreach ($icdx_bulanan as $index => &$data) {
-                $data['number'] = $startNumber + $index;
-            }
-
-            $totalQuery = "
-        SELECT COUNT(*) as total FROM (
-            SELECT icdx_data.bulan FROM ({$icdx_bulanan_subquery}) AS icdx_data 
-            JOIN icd_x ON icdx_data.icdx_kode = icd_x.icdKode
-            WHERE icdx_data.bulan LIKE '" . $db->escapeLikeString($bulan) . "%' 
-    ";
-            $totalQuery .= " GROUP BY icdx_data.bulan, icdx_data.icdx_kode, icd_x.icdNamaInggris 
-        ) AS count_table ";
-
-            $total = $db->query($totalQuery)->getRowArray()['total'] ?? 0;
-
+            // Mengembalikan data rawat jalan dalam format JSON
             return $this->response->setJSON([
-                'data' => $icdx_bulanan,
-                'total' => $total,
-                'limit' => $limit,
-                'offset' => $offset
+                'success' => true, // Indikator sukses
+                'data'    => $options, // Data opsi
             ]);
         } else {
-            // Jika peran tidak dikenali, kembalikan status 404
             return $this->response->setStatusCode(404)->setJSON([
-                'error' => 'Halaman tidak ditemukan',
+                'error' => 'Halaman tidak ditemukan', // Pesan jika peran tidak valid
             ]);
         }
     }
 
-    public function icd_9()
+    public function list_antrean()
     {
-        if (session()->get('role') == "Admin" || session()->get('role') == "Dokter" || session()->get('role') == "Perawat" || session()->get('role') == "Admisi") {
-            $db = db_connect();
-            $bulan = $this->request->getGet('bulan');
+        // Memeriksa apakah peran pengguna dalam sesi adalah "Satpam"
+        if (session()->get('role') == 'Satpam') {
+            // Mengambil data dari permintaan POST
+            $request = $this->request->getPost();
+            $search = $request['search']['value']; // Nilai pencarian
+            $start = $request['start']; // Indeks awal untuk paginasi
+            $length = $request['length']; // Panjang halaman
+            $draw = $request['draw']; // Hitungan gambar untuk DataTables
 
-            if (!$bulan) {
-                return $this->response->setStatusCode(400)->setJSON([
-                    'error' => 'Silakan masukkan bulan.'
+            // Mendapatkan parameter pengurutan
+            $order = $request['order'];
+            $sortColumnIndex = $order[0]['column']; // Indeks kolom
+            $sortDirection = $order[0]['dir']; // Arah pengurutan (asc atau desc)
+
+            // Pemetaan indeks kolom ke nama kolom di database
+            $columnMapping = [
+                0 => 'id_antrean',
+                1 => 'id_antrean',
+                2 => 'kode_antrean',
+                3 => 'tanggal_antrean',
+                4 => 'satpam',
+            ];
+
+            // Mendapatkan kolom untuk diurutkan
+            $sortColumn = $columnMapping[$sortColumnIndex] ?? 'id_antrean';
+
+            // Jika $search kosong, kembalikan data kosong
+            if (empty($search)) {
+                return $this->response->setJSON([
+                    'draw' => $draw,
+                    'recordsTotal' => 0,
+                    'recordsFiltered' => 0,
+                    'data' => []
                 ]);
             }
 
-            $limit = $this->request->getGet('limit');
-            $offset = $this->request->getGet('offset');
-            $startNumber = $offset + 1;
+            // Mendapatkan jumlah total catatan
+            $totalRecords = $this->AntreanModel
+                ->where('status', 'BELUM DIPANGGIL')
+                ->countAllResults(true);
 
-            $icd9_bulanan_subquery = "
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icd9_kode_1 AS icd9_kode FROM medrec_assesment WHERE icd9_kode_1 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icd9_kode_2 AS icd9_kode FROM medrec_assesment WHERE icd9_kode_2 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icd9_kode_3 AS icd9_kode FROM medrec_assesment WHERE icd9_kode_3 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icd9_kode_4 AS icd9_kode FROM medrec_assesment WHERE icd9_kode_4 IS NOT NULL
-        UNION ALL
-        SELECT DATE_FORMAT(waktu_dibuat, '%Y-%m') AS bulan, icd9_kode_5 AS icd9_kode FROM medrec_assesment WHERE icd9_kode_5 IS NOT NULL
-    ";
-
-            $query = "
-        SELECT 
-            icd9_data.bulan, 
-            icd9_data.icd9_kode, 
-            icd_9.icdNamaInggris AS icd9_nama,
-            COUNT(*) AS total_icd9 
-        FROM ({$icd9_bulanan_subquery}) AS icd9_data 
-        JOIN icd_9 ON icd9_data.icd9_kode = icd_9.icdKode
-        WHERE icd9_data.bulan LIKE '" . $db->escapeLikeString($bulan) . "%' 
-    ";
-
-            $query .= " GROUP BY icd9_data.bulan, icd9_data.icd9_kode, icd_9.icdNamaInggris ";
-            $query .= " ORDER BY icd9_data.bulan DESC, total_icd9 DESC ";
-            $query .= " LIMIT {$limit} OFFSET {$offset} ";
-
-            $icd9_bulanan = $db->query($query)->getResultArray();
-
-            foreach ($icd9_bulanan as $index => &$data) {
-                $data['number'] = $startNumber + $index;
+            // Menerapkan kueri pencarian
+            if ($search) {
+                $this->AntreanModel
+                    ->groupStart()
+                    ->like('tanggal_antrean', $search)
+                    ->groupEnd()
+                    ->where('status', 'BELUM DIPANGGIL')
+                    ->orderBy($sortColumn, $sortDirection); // Mengurutkan hasil
             }
 
-            $totalQuery = "
-        SELECT COUNT(*) as total FROM (
-            SELECT icd9_data.bulan FROM ({$icd9_bulanan_subquery}) AS icd9_data 
-            JOIN icd_9 ON icd9_data.icd9_kode = icd_9.icdKode
-            WHERE icd9_data.bulan LIKE '" . $db->escapeLikeString($bulan) . "%' 
-    ";
-            $totalQuery .= " GROUP BY icd9_data.bulan, icd9_data.icd9_kode, icd_9.icdNamaInggris 
-        ) AS count_table ";
+            // Mendapatkan jumlah catatan yang terfilter
+            $filteredRecords = $this->AntreanModel
+                ->where('status', 'BELUM DIPANGGIL')
+                ->countAllResults(false);
 
-            $total = $db->query($totalQuery)->getRowArray()['total'] ?? 0;
+            // Mengambil data pengguna
+            $users = $this->AntreanModel->where('status', 'BELUM DIPANGGIL')
+                ->orderBy($sortColumn, $sortDirection) // Mengurutkan hasil
+                ->findAll($length, $start); // Mengambil hasil dengan batasan panjang dan awal
 
+            // Menambahkan kolom 'no' untuk menandai urutan
+            foreach ($users as $index => &$item) {
+                $item['no'] = $start + $index + 1; // Menambahkan kolom 'no'
+            }
+
+            // Mengembalikan respons JSON
             return $this->response->setJSON([
-                'data' => $icd9_bulanan,
-                'total' => $total,
-                'limit' => $limit,
-                'offset' => $offset
+                'draw' => $draw,
+                'recordsTotal' => $totalRecords, // Total catatan
+                'recordsFiltered' => $filteredRecords, // Catatan terfilter
+                'data' => $users // Data pengguna
             ]);
         } else {
-            // Jika peran tidak dikenali, kembalikan status 404
+            // Jika bukan admin, mengembalikan status 404 dengan pesan error
             return $this->response->setStatusCode(404)->setJSON([
-                'error' => 'Halaman tidak ditemukan',
+                'error' => 'Halaman tidak ditemukan', // Pesan error
             ]);
         }
+    }
+
+    public function buat_antrean()
+    {
+        // Memeriksa peran pengguna, hanya 'Satpam' yang diizinkan
+        if (session()->get('role') == 'Satpam') {
+            // Validasi input
+            $validation = \Config\Services::validation();
+            $validation->setRules([
+                'kode_antrean' => 'required',
+            ]);
+
+            if (!$this->validate($validation->getRules())) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => NULL,
+                    'errors' => $validation->getErrors()
+                ]);
+            }
+
+            $db = db_connect();
+            $kode_input = $this->request->getPost('kode_antrean');
+
+            // Ambil data jaminan berdasarkan input kode
+            $jaminanData = $db->table('jaminan')
+                ->where('jaminanKode', $kode_input)
+                ->get()
+                ->getRow();
+
+            if (!$jaminanData) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Jaminan tidak ditemukan'
+                ]);
+            }
+
+            // Ambil kode antrean dari data jaminan
+            $kode_antrean = $jaminanData->jaminanAntrian;
+
+            // Ambil nomor antrean terakhir berdasarkan kode_antrean (bukan kode_input)
+            $lastQueue = $db->table('antrean')
+                ->select('RIGHT(nomor_antrean, 3) AS last_number')
+                ->where('kode_antrean', $kode_antrean)
+                ->where('tanggal_antrean >=', date('Y-m-d 00:00:00'))
+                ->where('tanggal_antrean <=', date('Y-m-d 23:59:59'))
+                ->orderBy('nomor_antrean', 'DESC')
+                ->limit(1)
+                ->get()
+                ->getRow();
+
+            $queueIncrement = $lastQueue ? intval($lastQueue->last_number) + 1 : 1;
+            $nomor_antrean = str_pad($queueIncrement, 3, '0', STR_PAD_LEFT);
+
+            $data = [
+                'kode_antrean' => $kode_antrean,
+                'nomor_antrean' => $nomor_antrean,
+                'satpam' => session()->get('fullname'),
+                'status' => 'BELUM DIPANGGIL'
+            ];
+
+            $this->AntreanModel->insert($data);
+
+            // Ambil ID terakhir yang baru saja dimasukkan
+            $insertedId = $this->AntreanModel->insertID();
+
+            // Ambil kembali data dari database berdasarkan ID
+            $insertedRow = $this->AntreanModel->find($insertedId);
+
+            $this->notify_clients('update');
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Nomor antrean berhasil dibuat',
+                'data' => [
+                    'antrean' => $kode_antrean . '-' . $nomor_antrean,
+                    'nama_jaminan' => $jaminanData->jaminanNama,
+                    'tanggal_antrean' => $insertedRow['tanggal_antrean']
+                ]
+            ]);
+        } else {
+            throw PageNotFoundException::forPageNotFound();
+        }
+    }
+
+    public function notify_clients()
+    {
+        $client = \Config\Services::curlrequest();
+        $response = $client->post(env('WS-URL-PHP'), [
+            'json' => []
+        ]);
+
+        return $this->response->setJSON([
+            'status' => 'Notification sent',
+            'response' => json_decode($response->getBody(), true)
+        ]);
     }
 }

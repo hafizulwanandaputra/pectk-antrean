@@ -16,7 +16,7 @@ $routes->get('/(?i)home', 'Home::index');
 $routes->post('/(?i)home/(?i)list_antrean', 'Home::list_antrean');
 $routes->get('/(?i)home/(?i)list_jaminan', 'Home::list_jaminan');
 $routes->post('/(?i)home/(?i)buat_antrean', 'Home::buat_antrean');
-$routes->get('/(?i)home/(?i)cetak_antrean', 'Home::cetak_antrean');
+$routes->get('/(?i)home/(?i)cetak_antrean/(:num)', 'Home::cetak_antrean/$1');
 
 // ANTREAN
 $routes->get('/(?i)antrean', 'Antrean::index');

@@ -60,8 +60,9 @@ $db = db_connect();
             <p>Tanggal: <span id="tanggal_antrean"></span></p>
             <hr>
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-success bg-gradient btn-lg rounded-4" id="submit_btn">Cetak Nomor Antrean</button>
+                <button type="button" class="btn btn-success bg-gradient btn-lg rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
             </div>
+            <iframe id="print_frame" style="display: none;"></iframe>
         </div>
         <div class="d-grid gap-2 mb-3">
             <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="list_antrean_btn" data-bs-toggle="modal" data-bs-target="#listAntreanModal">Lihat Nomor Antrean Sebelumnya</button>
@@ -245,7 +246,7 @@ $db = db_connect();
                     render: function(data, type, row) {
                         return `<div class="d-grid">
                             <div class="btn-group" role="group">
-                                <button class="btn btn-outline-body text-nowrap bg-gradient" style="--bs-btn-padding-y: 0.15rem; --bs-btn-padding-x: 0.5rem; --bs-btn-font-size: 1em;" data-bs-toggle="tooltip" data-bs-title="Cetak"><i class="fa-solid fa-print"></i></button>
+                                <button class="btn btn-outline-body text-nowrap bg-gradient cetak-btn" style="--bs-btn-padding-y: 0.15rem; --bs-btn-padding-x: 0.5rem; --bs-btn-font-size: 1em;" data-id="${row.id_antrean}" data-bs-toggle="tooltip" data-bs-title="Cetak"><i class="fa-solid fa-print"></i></button>
                             </div>
                             </div>`;
                     }
@@ -319,6 +320,54 @@ $db = db_connect();
             $('#externalSearch').val('');
             table.ajax.reload(null, false);
         });
+        $('#cetak-btn').on('click', function() {
+            const id = $(this).data('id');
+
+            // Tampilkan loading di tombol cetak
+            const $btn = $(this);
+            $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Silakan tunggu...`);
+
+            // Muat PDF ke iframe
+            var iframe = $('#print_frame');
+            iframe.attr('src', `<?= base_url("home/cetak_antrean") ?>/${id}`);
+
+            // Saat iframe selesai memuat, jalankan print
+            iframe.off('load').on('load', function() {
+                try {
+                    this.contentWindow.focus();
+                    this.contentWindow.print();
+                } catch (e) {
+                    showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
+                } finally {
+                    // Kembalikan tampilan tombol cetak
+                    $btn.prop('disabled', false).html('Cetak Nomor Antrean');
+                }
+            });
+        });
+        $(document).on('click', '.cetak-btn', function() {
+            const id = $(this).data('id');
+
+            // Tampilkan loading di tombol cetak
+            const $btn = $(this);
+            $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?>`);
+
+            // Muat PDF ke iframe
+            var iframe = $('#print_frame');
+            iframe.attr('src', `<?= base_url("home/cetak_antrean") ?>/${id}`);
+
+            // Saat iframe selesai memuat, jalankan print
+            iframe.off('load').on('load', function() {
+                try {
+                    this.contentWindow.focus();
+                    this.contentWindow.print();
+                } catch (e) {
+                    showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
+                } finally {
+                    // Kembalikan tampilan tombol cetak
+                    $btn.prop('disabled', false).html('<i class="fa-solid fa-print"></i>');
+                }
+            });
+        });
         $('#form_antrean').submit(async function(ə) {
             ə.preventDefault();
 
@@ -363,6 +412,8 @@ $db = db_connect();
                     $('#antrean').text(data.antrean);
                     $('#nama_jaminan').text(data.nama_jaminan);
                     $('#tanggal_antrean').text(data.tanggal_antrean);
+                    console.log(data.id_antrean);
+                    $('#cetak-btn').attr('data-id', data.id_antrean);
                 } else {
                     console.log("Validation Errors:", response.data.errors);
 

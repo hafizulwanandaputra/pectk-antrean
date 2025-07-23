@@ -33,8 +33,8 @@ $db = db_connect();
     <div class="no-fluid-content">
         <div class="text-center">
             <div class="my-4">
-                <span class="navbar-brand mx-0 text-start text-md-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 28pt;">
-                    <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="96px">
+                <span class="navbar-brand mx-0 text-start text-md-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 20pt;">
+                    <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="64px">
                     <div class="ps-4 text-start text-success-emphasis fw-bold d-none d-lg-block">PADANG EYE CENTER<br>TELUK KUANTAN</div>
                 </span>
             </div>
@@ -46,32 +46,53 @@ $db = db_connect();
                 <h4>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h4>
             </div>
         </div>
-        <div class="mb-3" id="form_antrean">
-            <div class="row row-cols-1 row-cols-lg-3 g-2">
+        <div class="mb-3">
+            <div class="row row-cols-1 row-cols-lg-3 g-4">
                 <div class="col">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
-                            <div style="font-size: 3em;"><i class="fa-solid fa-users"></i></div>
+                    <div class="card h-100 rounded-4">
+                        <div class="card-body text-center">
+                            <div style="font-size: 4em;"><i class="fa-solid fa-users"></i></div>
                             <div class="fs-4 fw-bold">UMUM</div>
-                        </button>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="UMUM">
+                                    Buat Antrean
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
-                            <div style="font-size: 3em;">
+                    <div class="card h-100 rounded-4">
+                        <div class="card-body text-center">
+                            <div style="font-size: 4em;">
                                 <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
                             </div>
                             <div class="fs-4 fw-bold">BPJS KESEHATAN</div>
-                        </button>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="BPJS KESEHATAN">
+                                    Buat Antrean
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="btn_umum">
-                            <div style="font-size: 3em;"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="card h-100 rounded-4">
+                        <div class="card-body text-center">
+                            <div style="font-size: 4em;"><i class="fa-solid fa-user-shield"></i></div>
                             <div class="fs-4 fw-bold">ASURANSI</div>
-                        </button>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="ASURANSI">
+                                    Buat Antrean
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -392,117 +413,44 @@ $db = db_connect();
                 }
             });
         });
-        $('#form_antrean').submit(async function(ə) {
+        $('.btn-apply').on('click', async function(ə) {
             ə.preventDefault();
-
-            const formData = new FormData(this);
-            console.log("Form Data:", $(this).serialize());
-
-            // Clear previous validation states
-            $('#form_antrean .is-invalid').removeClass('is-invalid');
-            $('#form_antrean .invalid-feedback').text('').hide();
-            $('#submit_btn').prop('disabled', true).html(`
-                <?= $this->include('spinner/spinner'); ?> Silakan tunggu...
+            const jaminan = $(this).data('name');
+            const $btn = $(this);
+            $btn.prop('disabled', true).html(`
+                <?= $this->include('spinner/spinner'); ?> Tunggu...
             `);
 
-            // Disable form inputs
-            $('#form_antrean input, #form_antrean textarea, #form_antrean select, #form_antrean button').prop('disabled', true);
-
             try {
-                const response = await axios.post(`<?= base_url('/home/buat_antrean') ?>`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
+                const response = await axios.post(`<?= base_url('/home/buat_antrean') ?>?jaminan=${jaminan}`);
+
+                // Simpan dulu opsi yang disabled
+                const disabledOptions = $('#kode_antrean option:disabled').map(function() {
+                    return this.value;
+                }).get();
+
+                // Aktifkan sementara
+                $('#kode_antrean option').prop('disabled', false);
+
+                // Reset nilai
+                $('#kode_antrean').val('');
+
+                // Kembalikan opsi yang tadi disabled
+                disabledOptions.forEach(val => {
+                    $(`#kode_antrean option[value="${val}"]`).prop('disabled', true);
                 });
-
-                if (response.data.success) {
-                    // Simpan dulu opsi yang disabled
-                    const disabledOptions = $('#kode_antrean option:disabled').map(function() {
-                        return this.value;
-                    }).get();
-
-                    // Aktifkan sementara
-                    $('#kode_antrean option').prop('disabled', false);
-
-                    // Reset nilai
-                    $('#kode_antrean').val('');
-
-                    // Kembalikan opsi yang tadi disabled
-                    disabledOptions.forEach(val => {
-                        $(`#kode_antrean option[value="${val}"]`).prop('disabled', true);
-                    });
-                    const data = response.data.data;
-                    $('#antrean_sukses').show();
-                    $('#antrean').text(data.antrean);
-                    $('#nama_jaminan').text(data.nama_jaminan);
-                    $('#tanggal_antrean').text(data.tanggal_antrean);
-                    console.log(data.id_antrean);
-                    $('#cetak-btn').attr('data-id', data.id_antrean);
-                } else {
-                    console.log("Validation Errors:", response.data.errors);
-
-                    // Clear previous validation states
-                    $('#form_antrean .is-invalid').removeClass('is-invalid');
-                    $('#form_antrean .invalid-feedback').text('').hide();
-
-                    // Display new validation errors
-                    for (const field in response.data.errors) {
-                        if (response.data.errors.hasOwnProperty(field)) {
-                            const fieldElement = $('#' + field);
-
-                            // Handle radio button group separately
-                            if (["alergi", "keadaan_umum"].includes(field)) {
-                                const radioGroup = $(`input[name='${field}']`); // Ambil grup radio berdasarkan nama
-                                const feedbackElement = radioGroup.closest('.radio-group').find('.invalid-feedback'); // Gunakan pembungkus dengan class tertentu
-
-                                if (radioGroup.length > 0 && feedbackElement.length > 0) {
-                                    radioGroup.addClass('is-invalid');
-                                    feedbackElement.text(response.data.errors[field]).show();
-
-                                    // Remove error message when the user selects any radio button in the group
-                                    radioGroup.on('change', function() {
-                                        radioGroup.removeClass('is-invalid');
-                                        feedbackElement.text('').hide();
-                                    });
-                                } else {
-                                    console.warn("Radio group tidak ditemukan untuk field:", field);
-                                }
-                            } else {
-                                let feedbackElement = fieldElement.siblings('.invalid-feedback');
-
-                                // Handle input-group cases
-                                if (fieldElement.closest('.input-group').length) {
-                                    feedbackElement = fieldElement.closest('.input-group').find('.invalid-feedback');
-                                }
-
-                                if (fieldElement.length > 0 && feedbackElement.length > 0) {
-                                    fieldElement.addClass('is-invalid');
-                                    feedbackElement.text(response.data.errors[field]).show();
-
-                                    // Remove error message when the user corrects the input
-                                    fieldElement.on('input change', function() {
-                                        $(this).removeClass('is-invalid');
-                                        feedbackElement.text('').hide();
-                                    });
-                                } else {
-                                    console.warn("Elemen tidak ditemukan pada field:", field);
-                                }
-                            }
-                        }
-                    }
-                    console.error('Perbaiki kesalahan pada formulir.');
-                }
+                const data = response.data.data;
+                $('#antrean_sukses').show();
+                $('#antrean').text(data.antrean);
+                $('#nama_jaminan').text(data.nama_jaminan);
+                $('#tanggal_antrean').text(data.tanggal_antrean);
+                $('#cetak-btn').attr('data-id', data.id_antrean);
             } catch (error) {
-                if (error.response.request.status === 422 || error.response.request.status === 401) {
-                    showFailedToast(error.response.data.message);
-                } else {
-                    showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
-                }
+                showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
             } finally {
-                $('#submit_btn').prop('disabled', false).html(`
-                    Buat Nomor Antrean
+                $btn.prop('disabled', false).html(`
+                    Buat Antrean
                 `);
-                $('#form_antrean input, #form_antrean textarea, #form_antrean select, #form_antrean button').prop('disabled', false);
             }
         });
         await fetchJaminanOptions()

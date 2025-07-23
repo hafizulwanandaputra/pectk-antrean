@@ -88,7 +88,7 @@
                             <div style="white-space: nowrap;">:</div>
                         </td>
                         <td style="width: 75%; vertical-align: top; padding-top: 0; padding-bottom: 0; padding-left: 0.1cm; padding-right: 0.1cm;">
-                            <div style="white-space: nowrap;"><?= $antrean['jaminanNama'] ?></div>
+                            <div style="white-space: nowrap;"><?= $antrean['nama_jaminan'] ?></div>
                         </td>
                     </tr>
                     <tr>

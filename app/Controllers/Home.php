@@ -299,8 +299,7 @@ class Home extends BaseController
             // Ambil antrean dengan join ke jaminan
             $db = \Config\Database::connect();
             $builder = $db->table('antrean');
-            $builder->join('jaminan', 'jaminan.jaminanAntrian = antrean.kode_antrean');
-            $builder->where('antrean.id_antrean', $id);
+            $builder->where('id_antrean', $id);
             $antrean = $builder->get()->getRowArray();
 
             if (!$antrean) {

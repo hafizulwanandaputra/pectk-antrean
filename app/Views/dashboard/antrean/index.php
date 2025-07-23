@@ -55,18 +55,31 @@
         <div class="no-fluid-content">
             <h1 id="no-data-alert" class="text-center" style="display: none;">Tidak ada Antrean</h1>
             <div id="antreanContainer" class="row row-cols-1 row-cols-lg-2 g-2">
-                <?php for ($i = 0; $i < 6; $i++) : ?>
-                    <!-- <div class="col">
-                            <div class="card h-100">
-                                <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                </div>
-                                <div class="card-footer">
-
+                <?php for ($i = 0; $i < 8; $i++) : ?>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title placeholder-glow">
+                                    <span class="placeholder w-100" style="max-width: 256px;"></span>
+                                </h5>
+                                <p class="card-text placeholder-glow" style="font-size: 0.75em;">
+                                    <span class="placeholder w-100" style="max-width: 128px;"></span><br>
+                                    <span class="placeholder w-100" style="max-width: 128px;"></span><br>
+                                    <span class="placeholder w-100" style="max-width: 128px;"></span><br>
+                                    <span class="placeholder w-100" style="max-width: 128px;"></span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-grid gap-2">
+                                    <div class="btn-group" role="group">
+                                        <a class="btn btn-primary bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
+                                        <a class="btn btn-success bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
+                                        <a class="btn btn-danger bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
+                    </div>
                 <?php endfor; ?>
             </div>
             <nav id="paginationNav" class="d-flex justify-content-center justify-content-lg-end mt-3 overflow-auto w-100">
@@ -98,7 +111,7 @@
 <?= $this->endSection(); ?>
 <?= $this->section('javascript'); ?>
 <script>
-    let limit = 6;
+    let limit = 8;
     let currentPage = 1;
     let pembelianObatId = null;
 

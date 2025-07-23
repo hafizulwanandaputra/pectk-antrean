@@ -45,7 +45,7 @@ $db = db_connect();
             </div>
         </div>
         <div class="mb-3">
-            <div class="row row-cols-1 row-cols-lg-3 g-4">
+            <div class="row row-cols-1 row-cols-lg-3 g-3">
                 <div class="col">
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center py-1">

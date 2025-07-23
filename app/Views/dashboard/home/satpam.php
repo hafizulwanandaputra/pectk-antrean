@@ -33,29 +33,28 @@ $db = db_connect();
     <div class="no-fluid-content">
         <div class="text-center">
             <div class="mt-3 mb-2">
-                <span class="text-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 20pt;">
-                    <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="64px">
-                    <div class="ps-4 text-start text-success-emphasis fw-bold d-none d-lg-block">PADANG EYE CENTER<br>TELUK KUANTAN</div>
+                <span class="text-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 16pt;">
+                    <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="56px">
+                    <div class="ps-3 text-start text-success-emphasis fw-bold d-none d-lg-block">PADANG EYE CENTER<br>TELUK KUANTAN</div>
                 </span>
             </div>
             <h6><em>Melayani dengan Hati</em></h6>
-            <hr>
             <div class="my-4">
-                <h4><strong>Selamat Datang di Klinik Utama Mata Padang Eye Center Teluk Kuantan</strong></h4>
-                <h5>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h5>
+                <h5><strong>Selamat Datang di Klinik Utama Mata Padang Eye Center Teluk Kuantan</strong></h5>
+                <h6>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h6>
             </div>
         </div>
         <div class="mb-3">
             <div class="row row-cols-1 row-cols-lg-3 g-4">
                 <div class="col">
                     <div class="card h-100 rounded-4">
-                        <div class="card-body text-center">
-                            <div style="font-size: 4em;"><i class="fa-solid fa-users"></i></div>
-                            <div class="fs-5 fw-bold">UMUM</div>
+                        <div class="card-body text-center py-1">
+                            <div style="font-size: 3em;"><i class="fa-solid fa-users"></i></div>
+                            <div class="fs-6 fw-bold">UMUM</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="UMUM">
+                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="UMUM">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -64,15 +63,15 @@ $db = db_connect();
                 </div>
                 <div class="col">
                     <div class="card h-100 rounded-4">
-                        <div class="card-body text-center">
-                            <div style="font-size: 4em;">
+                        <div class="card-body text-center py-1">
+                            <div style="font-size: 3em;">
                                 <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
                             </div>
-                            <div class="fs-5 fw-bold">BPJS KESEHATAN</div>
+                            <div class="fs-6 fw-bold">BPJS KESEHATAN</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="BPJS KESEHATAN">
+                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="BPJS KESEHATAN">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -81,13 +80,13 @@ $db = db_connect();
                 </div>
                 <div class="col">
                     <div class="card h-100 rounded-4">
-                        <div class="card-body text-center">
-                            <div style="font-size: 4em;"><i class="fa-solid fa-user-shield"></i></div>
-                            <div class="fs-5 fw-bold">ASURANSI</div>
+                        <div class="card-body text-center py-1">
+                            <div style="font-size: 3em;"><i class="fa-solid fa-user-shield"></i></div>
+                            <div class="fs-6 fw-bold">ASURANSI</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient btn-lg rounded-4 btn-apply" data-name="ASURANSI">
+                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="ASURANSI">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -96,20 +95,18 @@ $db = db_connect();
                 </div>
             </div>
         </div>
-        <div class="alert alert-success text-center rounded-top-4 rounded-bottom-5" role="alert" id="antrean_sukses" style="display: none;">
-            <h4 class="alert-heading">Nomor antrean berhasil dibuat!</h4>
+        <div class="alert alert-success text-center rounded-top-4 rounded-bottom-5" role="alert" id="antrean_sukses" style="display: none; font-size: 0.75em;">
             <p class="mb-0">Nomor antrean Anda adalah:</p>
-            <h1 class="mb-0 display-1" id="antrean"></h1>
+            <h1 class="mb-0 fw-light" id="antrean"></h1>
             <p class="mb-0">Jaminan: <span id="nama_jaminan"></span></p>
             <p>Tanggal dan waktu: <span id="tanggal_antrean"></span></p>
-            <hr>
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-success bg-gradient btn-lg rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
+                <button type="button" class="btn btn-success bg-gradient rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
             </div>
             <iframe id="print_frame" style="display: none;"></iframe>
         </div>
         <div class="d-grid gap-2 mb-3">
-            <button type="button" class="btn btn-body bg-gradient btn-lg rounded-4" id="list_antrean_btn" data-bs-toggle="modal" data-bs-target="#listAntreanModal">Lihat Nomor Antrean Sebelumnya</button>
+            <button type="button" class="btn btn-body bg-gradient rounded-4" id="list_antrean_btn" data-bs-toggle="modal" data-bs-target="#listAntreanModal">Lihat Nomor Antrean Sebelumnya</button>
         </div>
     </div>
     <div class="modal fade" id="listAntreanModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="listAntreanModalLabel" aria-hidden="true">

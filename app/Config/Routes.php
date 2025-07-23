@@ -24,14 +24,6 @@ $routes->get('/(?i)antrean/(?i)list_antrean', 'Antrean::list_antrean');
 $routes->post('/(?i)antrean/(?i)panggil_antrean', 'Antrean::panggil_antrean');
 $routes->post('/(?i)antrean/(?i)atur_status', 'Antrean::atur_status');
 
-// JAMINAN
-$routes->get('/(?i)jaminan', 'Jaminan::index');
-$routes->post('/(?i)jaminan/(?i)jaminanlist', 'Jaminan::jaminanlist');
-$routes->get('/(?i)jaminan/(?i)jaminan/(:any)', 'Jaminan::jaminan/$1');
-$routes->post('/(?i)jaminan/(?i)create', 'Jaminan::create');
-$routes->post('/(?i)jaminan/(?i)update', 'Jaminan::update');
-$routes->delete('/(?i)jaminan/(?i)delete/(:any)', 'Jaminan::delete/$1');
-
 // PENGGUNA
 $routes->get('/(?i)admin', 'Admin::index');
 $routes->post('/(?i)admin/(?i)adminlist', 'Admin::adminlist');

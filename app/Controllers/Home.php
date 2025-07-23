@@ -177,39 +177,6 @@ class Home extends BaseController
         }
     }
 
-    public function list_jaminan()
-    {
-        // Memeriksa peran pengguna, hanya 'Admin' atau 'Admisi' yang diizinkan
-        if (session()->get('role') == 'Satpam') {
-            // Mengambil jaminan dari tabel master jaminan
-            $db = db_connect();
-            $masterjaminan = $db->table('jaminan')
-                ->where('jaminanStatus', 'AKTIF')
-                ->get()->getResultArray();
-
-            // Menyiapkan array opsi untuk dikirim dalam respon
-            $options = [];
-            // Menyusun opsi dari data pengguna yang diterima
-            foreach ($masterjaminan as $jaminan) {
-                // Menambahkan opsi ke dalam array
-                $options[] = [
-                    'value'  => $jaminan['jaminanKode'], // Teks untuk opsi
-                    'text'  => $jaminan['jaminanNama'] // Teks untuk opsi
-                ];
-            }
-
-            // Mengembalikan data rawat jalan dalam format JSON
-            return $this->response->setJSON([
-                'success' => true, // Indikator sukses
-                'data'    => $options, // Data opsi
-            ]);
-        } else {
-            return $this->response->setStatusCode(404)->setJSON([
-                'error' => 'Halaman tidak ditemukan', // Pesan jika peran tidak valid
-            ]);
-        }
-    }
-
     public function list_antrean()
     {
         // Memeriksa apakah peran pengguna dalam sesi adalah "Satpam"

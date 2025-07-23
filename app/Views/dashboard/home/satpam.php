@@ -32,18 +32,17 @@ $db = db_connect();
 <main class="main-content-inside px-3">
     <div class="no-fluid-content">
         <div class="text-center">
-            <div class="my-4">
-                <span class="navbar-brand mx-0 text-start text-md-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 20pt;">
+            <div class="mt-3 mb-2">
+                <span class="text-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 20pt;">
                     <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="64px">
                     <div class="ps-4 text-start text-success-emphasis fw-bold d-none d-lg-block">PADANG EYE CENTER<br>TELUK KUANTAN</div>
                 </span>
             </div>
-            <hr>
-            <h4><strong>Selamat Datang di Klinik Utama Mata Padang Eye Center Teluk Kuantan</strong></h4>
             <h6><em>Melayani dengan Hati</em></h6>
             <hr>
             <div class="my-4">
-                <h4>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h4>
+                <h4><strong>Selamat Datang di Klinik Utama Mata Padang Eye Center Teluk Kuantan</strong></h4>
+                <h5>Silakan ambil nomor antrean bagi pasien yang ingin berobat</h5>
             </div>
         </div>
         <div class="mb-3">
@@ -52,7 +51,7 @@ $db = db_connect();
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center">
                             <div style="font-size: 4em;"><i class="fa-solid fa-users"></i></div>
-                            <div class="fs-4 fw-bold">UMUM</div>
+                            <div class="fs-5 fw-bold">UMUM</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
@@ -69,7 +68,7 @@ $db = db_connect();
                             <div style="font-size: 4em;">
                                 <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
                             </div>
-                            <div class="fs-4 fw-bold">BPJS KESEHATAN</div>
+                            <div class="fs-5 fw-bold">BPJS KESEHATAN</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
@@ -84,7 +83,7 @@ $db = db_connect();
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center">
                             <div style="font-size: 4em;"><i class="fa-solid fa-user-shield"></i></div>
-                            <div class="fs-4 fw-bold">ASURANSI</div>
+                            <div class="fs-5 fw-bold">ASURANSI</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
@@ -171,39 +170,6 @@ $db = db_connect();
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
 <script>
-    async function fetchJaminanOptions(selectedJaminan = null) {
-        $('#loadingSpinner').show();
-        try {
-            // Panggil API dengan query string tanggal
-            const response = await axios.get(`<?= base_url('home/list_jaminan') ?>`);
-
-            if (response.data.success) {
-                const options = response.data.data;
-
-                // Simpan nilai yang saat ini dipilih untuk masing-masing elemen
-                const currentSelectionFilter = selectedJaminan || $('#kode_antrean').val();
-
-                // Hapus opsi yang ada, kecuali opsi pertama (default)
-                $('#kode_antrean').find('option:not(:first)').remove();
-
-                // Tambahkan opsi ke elemen select
-                options.forEach(option => {
-                    $('#kode_antrean').append(`<option value="${option.value}">${option.text}</option>`);
-                });
-
-                // Mengatur ulang pilihan sebelumnya
-                if (currentSelectionFilter) {
-                    $('#kode_antrean').val(currentSelectionFilter);
-                }
-            } else {
-                showFailedToast('Gagal mendapatkan jaminan.');
-            }
-        } catch (error) {
-            console.error(error);
-            showFailedToast(`${error}`);
-        }
-    }
-
     $(document).ready(async function() {
         var table = $('#tabel').DataTable({
             "oLanguage": {
@@ -453,7 +419,6 @@ $db = db_connect();
                 `);
             }
         });
-        await fetchJaminanOptions()
         $('#loadingSpinner').hide();
     });
 </script>

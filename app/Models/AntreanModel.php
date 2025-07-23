@@ -15,6 +15,7 @@ class AntreanModel extends Model
         'nomor_antrean',
         'tanggal_antrean',
         'satpam',
+        'loket',
         'status'
     ];
 }

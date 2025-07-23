@@ -101,7 +101,7 @@ $db = db_connect();
             <p class="mb-0">Nomor antrean Anda adalah:</p>
             <h1 class="mb-0 display-1" id="antrean"></h1>
             <p class="mb-0">Jaminan: <span id="nama_jaminan"></span></p>
-            <p>Tanggal: <span id="tanggal_antrean"></span></p>
+            <p>Tanggal dan waktu: <span id="tanggal_antrean"></span></p>
             <hr>
             <div class="d-grid gap-2">
                 <button type="button" class="btn btn-success bg-gradient btn-lg rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
@@ -138,7 +138,7 @@ $db = db_connect();
                                 <th scope="col" class="bg-body-secondary border-secondary text-nowrap" style="border-bottom-width: 2px;">Tindakan</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Jaminan</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Nomor Antrean</th>
-                                <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Tanggal Antrean</th>
+                                <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Tanggal dan Waktu Antrean</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Satpam</th>
                             </tr>
                         </thead>

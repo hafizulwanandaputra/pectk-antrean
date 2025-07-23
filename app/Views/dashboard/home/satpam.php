@@ -113,7 +113,7 @@ $db = db_connect();
         </div>
     </div>
     <div class="modal fade" id="listAntreanModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="listAntreanModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen-md-down modal-dialog-centered modal-dialog-scrollable ">
+        <div class="modal-dialog modal-lg modal-fullscreen-lg-down modal-dialog-centered modal-dialog-scrollable ">
             <div id="rajaldiv" enctype="multipart/form-data" class="modal-content bg-body-tertiary shadow-lg transparent-blur">
                 <div class="modal-header justify-content-between pt-2 pb-2" style="border-bottom: 1px solid var(--bs-border-color-translucent);">
                     <div class="d-flex flex-row gap-2 me-2 w-100">
@@ -136,6 +136,7 @@ $db = db_connect();
                             <tr class="align-middle">
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">No.</th>
                                 <th scope="col" class="bg-body-secondary border-secondary text-nowrap" style="border-bottom-width: 2px;">Tindakan</th>
+                                <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Jaminan</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Nomor Antrean</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Tanggal Antrean</th>
                                 <th scope="col" class="bg-body-secondary border-secondary" style="border-bottom-width: 2px;">Satpam</th>
@@ -213,7 +214,7 @@ $db = db_connect();
                 $(".page-item .page-link").addClass("bg-gradient date");
                 var pageInfo = this.api().page.info();
                 var infoText = `${pageInfo.recordsDisplay}`;
-                $('#total_datatables').html(infoText);
+                $('#loading').html(`${infoText} antrean`);
             },
             "search": {
                 "caseInsensitive": true
@@ -237,11 +238,7 @@ $db = db_connect();
                 beforeSend: function() {
                     $('#loading').html(`<?= $this->include('spinner/spinner'); ?> Memuat...`);
                 },
-                complete: function() {
-                    $('#loading').html(``);
-                },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $('#loading').html(``);
                     // Menampilkan toast error Bootstrap ketika permintaan AJAX gagal
                     showFailedToast('Gagal memuat data. Silakan coba lagi.'); // Menampilkan pesan kesalahan
                 }
@@ -261,6 +258,9 @@ $db = db_connect();
                             </div>
                             </div>`;
                     }
+                },
+                {
+                    data: 'nama_jaminan'
                 },
                 {
                     data: 'kode_antrean',
@@ -285,10 +285,10 @@ $db = db_connect();
                 "target": [1],
                 "orderable": false
             }, {
-                "target": [0, 1],
+                "target": [0, 1, 3],
                 "width": "0%"
             }, {
-                "target": [2, 3, 4],
+                "target": [2, 4, 5],
                 "width": "33%"
             }],
         });

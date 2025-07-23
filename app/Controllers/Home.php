@@ -197,9 +197,10 @@ class Home extends BaseController
             $columnMapping = [
                 0 => 'id_antrean',
                 1 => 'id_antrean',
-                2 => 'kode_antrean',
-                3 => 'tanggal_antrean',
-                4 => 'satpam',
+                2 => 'nama_jaminan',
+                3 => 'kode_antrean',
+                4 => 'tanggal_antrean',
+                5 => 'satpam',
             ];
 
             // Mendapatkan kolom untuk diurutkan

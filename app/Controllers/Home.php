@@ -14,7 +14,7 @@ class Home extends BaseController
     }
     public function index()
     {
-        if (session()->get('role' != "Satpam")) {
+        if (session()->get('role') != "Satpam") {
             // GREETINGS
             $seasonalGreetingA = array(); // Array untuk menyimpan ucapan musiman
             $seasonalGreetingA[] = array('dayBegin' => 30, 'monthBegin' => 12, 'dayEnd' => 31, 'monthEnd' => 12, 'text' => 'Selamat Tahun Baru'); // Ucapan untuk Tahun Baru
@@ -107,8 +107,8 @@ class Home extends BaseController
                     $labels_antreankode[] = $row['bulan'];
                 }
 
-                // Atur data rawat jalan per dokter
-                $data_per_kode_antreanl[$row['dokter']][$row['bulan']] = $row['total_antrean'];
+                // Atur data rawat jalan per kode_antrean
+                $data_per_kode_antreanl[$row['kode_antrean']][$row['bulan']] = $row['total_antrean'];
             }
 
             // Urutkan labels secara kronologis

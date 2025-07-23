@@ -186,11 +186,11 @@ $db = db_connect();
 
     <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
         <?php foreach ($antreanpiegraph->getResult() as $key => $antreanpiegraph) : ?>
-            data_antreanpiegraph.push(<?= $antreanpiegraph->total_rajal; ?>);
-            label_antreanpiegraph.push('<?= $antreanpiegraph->dokter; ?>');
+            data_antreanpiegraph.push(<?= $antreanpiegraph->total_antrean; ?>);
+            label_antreanpiegraph.push('<?= $antreanpiegraph->kode_antrean; ?>');
         <?php endforeach; ?>
         <?php foreach ($antreangraph->getResult() as $key => $antreangraph) : ?>
-            data_antreangraph.push(<?= $antreangraph->total_rajal; ?>);
+            data_antreangraph.push(<?= $antreangraph->total_antrean; ?>);
             label_antreangraph.push('<?= $antreangraph->bulan; ?>');
         <?php endforeach; ?>
     <?php endif; ?>

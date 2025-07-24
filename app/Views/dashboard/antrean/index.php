@@ -412,7 +412,7 @@
             $(this).prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?>`);
 
             try {
-                const response = await axios.post(`<?= base_url('/antrean/cek_antrean') ?>/${idAntrean}`); // Menonaktifkan pengguna
+                const response = await axios.post(`<?= base_url('/antrean/cek_antrean') ?>/${idAntrean}`);
                 if (response.data.status === 'BELUM DIPANGGIL') {
                     // Ucapkan kalimat
                     const utterance = new SpeechSynthesisUtterance(kalimat);

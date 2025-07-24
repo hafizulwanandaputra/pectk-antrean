@@ -83,22 +83,22 @@ class Home extends BaseController
 
 
             // Menghitung total data dari setiap tabel
-            $antreanpiegraph = $antrean->select('kode_antrean, COUNT(*) AS total_antrean')
-                ->orderBy('kode_antrean', 'ASC')
-                ->groupBy('kode_antrean')
+            $antreanpiegraph = $antrean->select('nama_jaminan, COUNT(*) AS total_antrean')
+                ->orderBy('nama_jaminan', 'DESC')
+                ->groupBy('nama_jaminan')
                 ->get();
             $antreangraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, COUNT(*) AS total_antrean')
                 ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m")')
                 ->get();
-            $antreankodegraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, kode_antrean, COUNT(*) AS total_antrean')
-                ->orderBy('kode_antrean', 'ASC')
-                ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m"), kode_antrean')
+            $antreankodegraph = $antrean->select('DATE_FORMAT(tanggal_antrean, "%Y-%m") AS bulan, nama_jaminan, COUNT(*) AS total_antrean')
+                ->orderBy('nama_jaminan', 'DESC')
+                ->groupBy('DATE_FORMAT(tanggal_antrean, "%Y-%m"), nama_jaminan')
                 ->get()
                 ->getResultArray();
 
             // Inisialisasi array untuk labels (bulan unik) dan datasets
             $labels_antreankode = [];
-            $data_per_kode_antreanl = [];
+            $data_per_nama_jaminanl = [];
 
             // Proses data hasil query
             foreach ($antreankodegraph as $row) {
@@ -107,8 +107,8 @@ class Home extends BaseController
                     $labels_antreankode[] = $row['bulan'];
                 }
 
-                // Atur data rawat jalan per kode_antrean
-                $data_per_kode_antreanl[$row['kode_antrean']][$row['bulan']] = $row['total_antrean'];
+                // Atur data rawat jalan per nama_jaminan
+                $data_per_nama_jaminanl[$row['nama_jaminan']][$row['bulan']] = $row['total_antrean'];
             }
 
             // Urutkan labels secara kronologis
@@ -116,7 +116,7 @@ class Home extends BaseController
 
             // Siapkan struktur data untuk Chart.js
             $datasets_antreankode = [];
-            foreach ($data_per_kode_antreanl as $kode => $data_bulan) {
+            foreach ($data_per_nama_jaminanl as $kode => $data_bulan) {
                 $dataset = [
                     'label' => $kode,
                     'pointStyle' => 'circle',

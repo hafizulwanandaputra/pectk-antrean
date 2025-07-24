@@ -91,7 +91,39 @@ $db = db_connect();
         <?php endif; ?>
         <?php if (session()->get('role') == "Admin" || session()->get('role') == "Satpam" || session()->get('role') == "Admisi") : ?>
             <div class="mb-3">
-                <div class="fw-bold mb-2 border-bottom">PLACEHOLDER</div>
+                <div class="fw-bold mb-2 border-bottom">Statistik Antrean</div>
+                <div class="row row-cols-1 row-cols-lg-2 g-2 mb-2">
+                    <div class="col">
+                        <div class="card w-100  shadow-sm">
+                            <div style="font-size: 0.9em;" class="card-header py-1 px-3 w-100 text-truncate">Antrean Menurut Jaminan</div>
+                            <div class="card-body py-2 px-3">
+                                <div class="ratio ratio-4x3 w-100">
+                                    <canvas id="antreanpiegraph"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card w-100  shadow-sm">
+                            <div style="font-size: 0.9em;" class="card-header py-1 px-3 w-100 text-truncate">Antrean Per Bulan Menurut Jaminan</div>
+                            <div class="card-body py-2 px-3">
+                                <div class="ratio ratio-4x3 w-100">
+                                    <canvas id="antreankodegraph"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <div class="card w-100  shadow-sm">
+                        <div style="font-size: 0.9em;" class="card-header py-1 px-3 w-100 text-truncate">Antrean Per Bulan Keseluruhan</div>
+                        <div class="card-body py-2 px-3">
+                            <div class="ratio ratio-onecol w-100">
+                                <canvas id="antreangraph"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         <?php endif; ?>
     </div>
@@ -187,7 +219,7 @@ $db = db_connect();
     <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
         <?php foreach ($antreanpiegraph->getResult() as $key => $antreanpiegraph) : ?>
             data_antreanpiegraph.push(<?= $antreanpiegraph->total_antrean; ?>);
-            label_antreanpiegraph.push('<?= $antreanpiegraph->kode_antrean; ?>');
+            label_antreanpiegraph.push('<?= $antreanpiegraph->nama_jaminan; ?>');
         <?php endforeach; ?>
         <?php foreach ($antreangraph->getResult() as $key => $antreangraph) : ?>
             data_antreangraph.push(<?= $antreangraph->total_antrean; ?>);
@@ -199,7 +231,7 @@ $db = db_connect();
         var data_content_antreanpiegraph = {
             labels: label_antreanpiegraph,
             datasets: [{
-                label: 'Total Rawat Jalan',
+                label: 'Total Antrean',
                 pointStyle: 'circle',
                 pointRadius: 6,
                 pointHoverRadius: 12,
@@ -215,7 +247,7 @@ $db = db_connect();
         var data_content_antreangraph = {
             labels: label_antreangraph,
             datasets: [{
-                label: 'Total Rawat Jalan',
+                label: 'Total Antrean',
                 pointRadius: 6,
                 pointHoverRadius: 12,
                 fill: false,
@@ -225,105 +257,105 @@ $db = db_connect();
     <?php endif; ?>
 
     <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
-        // var chart_antreanpiegraph = createChart(document.getElementById('antreanpiegraph').getContext('2d'), {
-        //     type: 'pie',
-        //     data: data_content_antreanpiegraph,
-        //     options: {
-        //         responsive: true,
-        //         maintainAspectRatio: false,
-        //         locale: 'id-ID',
-        //         plugins: {
-        //             legend: {
-        //                 display: true,
-        //                 position: 'bottom'
-        //             },
-        //             filler: {
-        //                 drawTime: 'beforeDraw'
-        //             }
-        //         },
-        //         scale: {
-        //             ticks: {
-        //                 precision: 0
-        //             }
-        //         }
-        //     }
-        // })
-        // var chart_antreankodegraph = createChart(document.getElementById('antreankodegraph').getContext('2d'), {
-        //     type: 'line',
-        //     data: data_content_antreankodegraph,
-        //     options: {
-        //         responsive: true,
-        //         maintainAspectRatio: false,
-        //         locale: 'id-ID',
-        //         interaction: {
-        //             intersect: false,
-        //             mode: 'index',
-        //         },
-        //         plugins: {
-        //             legend: {
-        //                 display: false
-        //             }
-        //         },
-        //         scales: {
-        //             x: {
-        //                 title: {
-        //                     display: true,
-        //                     text: 'Bulan'
-        //                 }
-        //             },
-        //             y: {
-        //                 beginAtZero: true,
-        //                 title: {
-        //                     display: true,
-        //                     text: 'Total Rawat Jalan'
-        //                 }
-        //             }
-        //         },
-        //         scale: {
-        //             ticks: {
-        //                 precision: 0
-        //             }
-        //         }
-        //     }
-        // })
-        // var chart_antreangraph = createChart(document.getElementById('antreangraph').getContext('2d'), {
-        //     type: 'line',
-        //     data: data_content_antreangraph,
-        //     options: {
-        //         responsive: true,
-        //         maintainAspectRatio: false,
-        //         locale: 'id-ID',
-        //         interaction: {
-        //             intersect: false,
-        //             mode: 'index',
-        //         },
-        //         plugins: {
-        //             legend: {
-        //                 display: false
-        //             }
-        //         },
-        //         scales: {
-        //             x: {
-        //                 title: {
-        //                     display: true,
-        //                     text: 'Bulan'
-        //                 }
-        //             },
-        //             y: {
-        //                 beginAtZero: true,
-        //                 title: {
-        //                     display: true,
-        //                     text: 'Total Rawat Jalan'
-        //                 }
-        //             }
-        //         },
-        //         scale: {
-        //             ticks: {
-        //                 precision: 0
-        //             }
-        //         }
-        //     }
-        // })
+        var chart_antreanpiegraph = createChart(document.getElementById('antreanpiegraph').getContext('2d'), {
+            type: 'pie',
+            data: data_content_antreanpiegraph,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                locale: 'id-ID',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    filler: {
+                        drawTime: 'beforeDraw'
+                    }
+                },
+                scale: {
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        })
+        var chart_antreankodegraph = createChart(document.getElementById('antreankodegraph').getContext('2d'), {
+            type: 'line',
+            data: data_content_antreankodegraph,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                locale: 'id-ID',
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Bulan'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Antrean'
+                        }
+                    }
+                },
+                scale: {
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        })
+        var chart_antreangraph = createChart(document.getElementById('antreangraph').getContext('2d'), {
+            type: 'line',
+            data: data_content_antreangraph,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                locale: 'id-ID',
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Bulan'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total Antrean'
+                        }
+                    }
+                },
+                scale: {
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        })
     <?php endif; ?>
 
     // Initial setup

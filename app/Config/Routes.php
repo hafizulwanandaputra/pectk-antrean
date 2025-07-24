@@ -20,7 +20,7 @@ $routes->get('/(?i)home/(?i)cetak_antrean/(:num)', 'Home::cetak_antrean/$1');
 // ANTREAN
 $routes->get('/(?i)antrean', 'Antrean::index');
 $routes->get('/(?i)antrean/(?i)list_antrean', 'Antrean::list_antrean');
-$routes->get('/(?i)antrean/(?i)detail_antrean/(:num)', 'Antrean::detail_antrean/$1');
+$routes->post('/(?i)antrean/(?i)cek_antrean/(:num)', 'Antrean::cek_antrean/$1');
 $routes->post('/(?i)antrean/(?i)selesai_antrean/(:num)', 'Antrean::selesai_antrean/$1');
 $routes->post('/(?i)antrean/(?i)batal_antrean/(:num)', 'Antrean::batal_antrean/$1');
 

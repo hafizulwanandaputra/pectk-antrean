@@ -72,10 +72,14 @@
                                 </p>
                             </div>
                             <div class="card-footer">
-                                <div class="d-grid gap-2">
-                                    <div class="btn-group" role="group">
+                                <div class="row gx-2">
+                                    <div class="col d-grid">
                                         <a class="btn btn-primary bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
+                                    </div>
+                                    <div class="col d-grid">
                                         <a class="btn btn-success bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
+                                    </div>
+                                    <div class="col d-grid">
                                         <a class="btn btn-danger bg-gradient btn-sm disabled placeholder" aria-disabled="true"></a>
                                     </div>
                                 </div>
@@ -201,14 +205,18 @@
                                     </p>
                                 </div>
                                 <div class="card-footer">
-                                    <div class="d-grid gap-2">
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${call_status}>
+                                    <div class="row gx-2">
+                                        <div class="col d-grid">
+                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.id_antrean}" data-name="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${call_status}>
                                                 Panggil
                                             </button>
+                                        </div>
+                                        <div class="col d-grid">
                                             <button type="button" class="btn btn-success btn-sm bg-gradient btn-complete" data-id="${antrean.id_antrean}" data-name="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${call_status}>
                                                 Selesai
                                             </button>
+                                        </div>
+                                        <div class="col d-grid">
                                             <button type="button" class="btn btn-danger btn-sm bg-gradient btn-cancel" data-id="${antrean.id_antrean}" data-name="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${batal_status}>
                                                 Batal
                                             </button>
@@ -395,21 +403,41 @@
             localStorage.setItem('nama_jaminan', selectedValue);
         });
 
-        $(document).on('click', '.btn-call', function() {
-            const nomorAntrean = $(this).data('id');
+        $(document).on('click', '.btn-call', async function() {
+            const idAntrean = $(this).data('id');
+            const nomorAntrean = $(this).data('name');
             // Pisahkan menjadi huruf dan angka: "U" dan "001"
             const [huruf, angka] = nomorAntrean.split('-');
             const kalimat = `Nomor antrean, ${huruf}, ${angka}, silakan menuju <?= session()->get('fullname'); ?>.`;
+            $(this).prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?>`);
 
-            // Ucapkan kalimat
-            const utterance = new SpeechSynthesisUtterance(kalimat);
-            utterance.lang = 'id-ID';
-            utterance.rate = 1; // Perlambat suara
-            if (googleVoice) {
-                utterance.voice = googleVoice;
+            try {
+                const response = await axios.post(`<?= base_url('/antrean/cek_antrean') ?>/${idAntrean}`); // Menonaktifkan pengguna
+                if (response.data.status === 'BELUM DIPANGGIL') {
+                    // Ucapkan kalimat
+                    const utterance = new SpeechSynthesisUtterance(kalimat);
+                    utterance.lang = 'id-ID';
+                    utterance.rate = 1; // Perlambat suara
+                    if (googleVoice) {
+                        utterance.voice = googleVoice;
+                    }
+
+                    speechSynthesis.speak(utterance);
+                    showSuccessToast(`Antrean ${nomorAntrean} telah dipanggil.`); // Menampilkan pesan sukses
+                } else if (response.data.status === 'SUDAH DIPANGGIL') {
+                    showFailedToast(`Antrean ${nomorAntrean} sudah dipanggil sebelumnya.`); // Menampilkan pesan gagal
+                } else {
+                    showFailedToast(`Antrean ${nomorAntrean} sudah dibatalkan sebelumnya.`); // Menampilkan pesan gagal
+                }
+            } catch (error) {
+                if (error.response.request.status === 401) {
+                    showFailedToast(error.response.data.message);
+                } else {
+                    showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
+                }
+            } finally {
+                $(this).prop('disabled', false).html(`Panggil`);
             }
-
-            speechSynthesis.speak(utterance);
         });
 
         // Menampilkan modal untuk menyelesaikan antrean

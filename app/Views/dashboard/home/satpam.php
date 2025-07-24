@@ -328,11 +328,11 @@ $db = db_connect();
             $('#externalSearch').val('');
             table.ajax.reload(null, false);
         });
-        $('#cetak-btn').on('click', function() {
-            const id = $(this).data('id');
+
+        function cetakAntrean(id) {
+            const $btn = $(`#cetak-btn[data-id="${id}"]`);
 
             // Tampilkan loading di tombol cetak
-            const $btn = $(this);
             $('.btn-apply').prop('disabled', true);
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Silakan tunggu...`);
 
@@ -349,10 +349,14 @@ $db = db_connect();
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
                     $('.btn-apply').prop('disabled', false);
-                    // Kembalikan tampilan tombol cetak
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
                 }
             });
+        }
+
+        $('#cetak-btn').on('click', function() {
+            const id = $(this).data('id');
+            cetakAntrean(id);
         });
         $(document).on('click', '.cetak-btn', function() {
             const id = $(this).data('id');
@@ -415,11 +419,14 @@ $db = db_connect();
                     $(`#kode_antrean option[value="${val}"]`).prop('disabled', true);
                 });
                 const data = response.data.data;
-                $('#antrean_sukses').show();
-                $('#antrean').text(data.antrean);
-                $('#nama_jaminan').text(data.nama_jaminan);
-                $('#tanggal_antrean').text(data.tanggal_antrean);
-                $('#cetak-btn').attr('data-id', data.id_antrean);
+                await Promise.all([
+                    $('#antrean_sukses').show(),
+                    $('#antrean').text(data.antrean),
+                    $('#nama_jaminan').text(data.nama_jaminan),
+                    $('#tanggal_antrean').text(data.tanggal_antrean),
+                    $('#cetak-btn').attr('data-id', data.id_antrean)
+                ]);
+                cetakAntrean(data.id_antrean);
             } catch (error) {
                 showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
             } finally {

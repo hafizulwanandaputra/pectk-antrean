@@ -25,6 +25,7 @@ $db = db_connect();
     <div id="loadingSpinner" class="px-2">
         <?= $this->include('spinner/spinner'); ?>
     </div>
+    <a id="hideSuccessAlert" class="fs-6 mx-2 text-success-emphasis" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Sembunyikan info nomor antrean" style="display: none;"><i class="fa-solid fa-chevron-up"></i></a>
 </div>
 <div style="min-width: 1px; max-width: 1px;"></div>
 <?= $this->endSection(); ?>
@@ -334,6 +335,7 @@ $db = db_connect();
 
             // Tampilkan loading di tombol cetak
             $('.btn-apply').prop('disabled', true);
+            $('#hideSuccessAlert').hide();
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Silakan tunggu...`);
 
             // Muat PDF ke iframe
@@ -349,6 +351,7 @@ $db = db_connect();
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
                     $('.btn-apply').prop('disabled', false);
+                    $('#hideSuccessAlert').show();
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
                 }
             });
@@ -435,6 +438,15 @@ $db = db_connect();
                     Buat Antrean
                 `);
             }
+        });
+        $('#hideSuccessAlert').on('click', async function(ə) {
+            ə.preventDefault();
+            $('#antrean_sukses').hide();
+            $('#hideSuccessAlert').hide();
+            $('#cetak-btn').attr('data-id', '');
+            $('#antrean').text('');
+            $('#nama_jaminan').text('');
+            $('#tanggal_antrean').text('');
         });
         $('#loadingSpinner').hide();
     });

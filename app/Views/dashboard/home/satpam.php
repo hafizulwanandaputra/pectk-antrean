@@ -330,7 +330,7 @@ $db = db_connect();
         });
 
         function cetakAntrean(id) {
-            const $btn = $(`#cetak-btn[data-id="${id}"]`);
+            const $btn = $(`#cetak-btn`);
 
             // Tampilkan loading di tombol cetak
             $('.btn-apply').prop('disabled', true);

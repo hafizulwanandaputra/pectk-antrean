@@ -62,10 +62,12 @@
                                 <h5 class="card-title placeholder-glow">
                                     <span class="placeholder w-100" style="max-width: 256px;"></span>
                                 </h5>
-                                <p class="card-text placeholder-glow" style="font-size: 0.75em;">
+                                <p class="card-text mb-0 placeholder-glow" style="font-size: 0.75em;">
                                     <span class="placeholder w-100" style="max-width: 128px;"></span><br>
                                     <span class="placeholder w-100" style="max-width: 128px;"></span><br>
-                                    <span class="placeholder w-100" style="max-width: 128px;"></span><br>
+                                    <span class="placeholder w-100" style="max-width: 128px;"></span>
+                                </p>
+                                <p class="card-text placeholder-glow">
                                     <span class="placeholder w-100" style="max-width: 128px;"></span>
                                 </p>
                             </div>
@@ -144,22 +146,32 @@
             } else {
                 data.antrean.forEach(function(antrean) {
                     const loket = antrean.loket ? `${pasien.loket}` : `<em>Belum ada loket</em>`;
+                    let status = antrean.status;
+                    if (status === 'BELUM DIPANGGIL') {
+                        status = `<span class="badge text-bg-warning">${antrean.status}</span>`;
+                    } else if (status === 'SUDAH DIPANGGIL') {
+                        status = `<span class="badge text-bg-success">${antrean.status}</span>`;
+                    } else if (status === 'BATAL') {
+                        status = `<span class="badge text-bg-danger">${antrean.status}</span>`;
+                    }
                     const antreanElement = `
                         <div class="col">
                             <div class="card h-100 shadow-sm">
                                 <div class="card-body">
                                     <h5 class="card-title date">${antrean.kode_antrean}-${antrean.nomor_antrean}</h5>
-                                    <p class="card-text" style="font-size: 0.75em;">
+                                    <p class="card-text mb-0" style="font-size: 0.75em;">
                                         ${antrean.nama_jaminan}<br>
                                         ${antrean.tanggal_antrean}<br>
-                                        ${loket}<br>
-                                        ${antrean.status}
+                                        ${loket}
+                                    </p>
+                                    <p class="card-text">
+                                        ${status}
                                     </p>
                                 </div>
                                 <div class="card-footer">
                                     <div class="d-grid gap-2">
                                         <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.id_antrean}">
+                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.kode_antrean}-${antrean.nomor_antrean}">
                                                 Panggil
                                             </button>
                                             <button type="button" class="btn btn-success btn-sm bg-gradient btn-complete" data-id="${antrean.id_antrean}">
@@ -260,7 +272,33 @@
         }
     });
 
-    $(document).ready(function() {
+    let voiceReady = false;
+
+    // Siapkan suara Google Bahasa Indonesia
+    let googleVoice = null;
+
+    function loadVoices() {
+        const voices = speechSynthesis.getVoices();
+        googleVoice = voices.find(v => v.name === 'Google Bahasa Indonesia' && v.lang === 'id-ID');
+        voiceReady = true;
+    }
+
+    // Cegah masalah jika suara belum tersedia saat awal
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    async function setNamaJaminanFromLocalStorage() {
+        return new Promise((resolve) => {
+            const savedJaminan = localStorage.getItem('nama_jaminan');
+            if (savedJaminan) {
+                $('#nama_jaminan').val(savedJaminan);
+            }
+            resolve(); // selesai, lanjut ke fetchAntrean()
+        });
+    }
+
+    $(document).ready(async function() {
         const socket = new WebSocket('<?= env('WS-URL-JS') ?>'); // Ganti dengan domain VPS
 
         socket.onopen = () => {
@@ -317,8 +355,32 @@
             fetchAntrean(); // Panggil fungsi untuk mengambil data pasien
         });
 
+        // Simpan saat dipilih
+        $('#nama_jaminan').on('change', function() {
+            const selectedValue = $(this).val();
+            localStorage.setItem('nama_jaminan', selectedValue);
+        });
+
+        $(document).on('click', '.btn-call', function() {
+            const nomorAntrean = $(this).data('id');
+            // Pisahkan menjadi huruf dan angka: "U" dan "001"
+            const [huruf, angka] = nomorAntrean.split('-');
+            const kalimat = `Nomor antrean, ${huruf}, ${angka}, silakan menuju <?= session()->get('fullname'); ?>.`;
+
+            // Ucapkan kalimat
+            const utterance = new SpeechSynthesisUtterance(kalimat);
+            utterance.lang = 'id-ID';
+            utterance.rate = 1; // Perlambat suara
+            if (googleVoice) {
+                utterance.voice = googleVoice;
+            }
+
+            speechSynthesis.speak(utterance);
+        });
+
         // Panggil fungsi untuk mengambil data pasien saat dokumen siap
-        fetchAntrean();
+        await setNamaJaminanFromLocalStorage();
+        fetchAntrean(); // dijalankan setelah dropdown diatur
         // $('#loadingSpinner').hide();
     });
 

@@ -1,6 +1,6 @@
-# Sistem Informasi Manajemen Klinik Utama Mata Padang Eye Center Teluk Kuantan
+# Sistem Antrean Klinik Utama Mata Padang Eye Center Teluk Kuantan
 
-**Aplikasi Sistem Informasi Manajemen Klinik Utama Mata Padang Eye Center Teluk Kuantan** adalah sebuah sistem yang digunakan untuk memenuhi proses bisnis pada Klinik Utama Mata Padang Eye Center Teluk Kuantan. Sistem ini memanajemen pasien, rawat jalan, rekam medis elektronik (sedang dalam pengembangan), stok obat, resep obat, dan transaksi. Aplikasi ini didasarkan pada [HWPweb Admin Template](https://github.com/hafizulwanandaputra/hwpweb-admin-template) yang juga didasarkan pada [CodeIgniter 4](https://github.com/codeigniter4/appstarter).
+**Aplikasi Sistem Antrean Klinik Utama Mata Padang Eye Center Teluk Kuantan** adalah sebuah sistem yang digunakan untuk memproses antrean pasien yang berobat ke Klinik Utama Mata Padang Eye Center Teluk Kuantan. Sistem ini dapat membuat, mencetak, memanggil, dan mengatur status nomor antrean. Aplikasi ini didasarkan pada [HWPweb Admin Template](https://github.com/hafizulwanandaputra/hwpweb-admin-template) yang juga didasarkan pada [CodeIgniter 4](https://github.com/codeigniter4/appstarter).
 
 ## Instalasi
 
@@ -12,8 +12,8 @@
 
 1. Salin `.env.example` ke `.env` dan sesuaikan untuk aplikasi ini, khususnya `requestURL` dan pengaturan basis data.
 2. Buat basis data MySQL yang sesuai dengan nama basis data yang ditentukan dalam file `.env`.
-3. Gunakan file `pectk-simklinik-no-data.sql.gz` di repositori ini untuk impor tabel-tabel ke dalam basis data.
-4. Jalankan `php spark db:seed User` dan `php spark db:seed PwdTransaksi` untuk menyemai (_seed_) item basis data.
+3. Gunakan file `pectk-antrean-no-data.sql.gz` di repositori ini untuk impor tabel-tabel ke dalam basis data.
+4. Jalankan `php spark db:seed User` untuk menyemai (_seed_) item basis data.
 5. Untuk digunakan dengan server pengembangan PHP, jalankan `php spark serve` untuk memulai server. Biasanya [http://localhost:8080](http://localhost:8080). Anda dapat menggunakan port yang berbeda dengan menggunakan `php spark serve --port 8081`. Ganti `8081` dengan nomor port yang diinginkan. Anda perlu mengubah `requestURL` di `.env` agar sesuai dengan nomor port yang diinginkan.
 6. Untuk penggunaan tanpa server pengembangan PHP seperti Apache atau Nginx, cukup buka dari URL seperti [http://localhost/pectk-farmasi](http://localhost/pectk-farmasi) atau yang lain berdasarkan konfigurasi server web Anda. Anda perlu mengubah `requestURL` di `.env` agar sesuai dengan alamat URL yang diinginkan.
    > URL dasar (_base URL_) didasarkan pada nilai `$_SERVER['SERVER_NAME']` PHP. Anda hanya perlu mengubah `requestURL` yang terdiri dari port dan subfolder (jika aplikasi disimpan dalam subfolder).
@@ -22,7 +22,7 @@
 
 ### Websocket
 
-Konfigurasi URL websocket terletak pada `.env` dengan nilai `WS-URL-JS` untuk _frontend_ (contoh: `ws://localhost:8090`) dan `WS-URL-PHP` untuk _backend_ (contoh: `http://localhost:3000/notify`).
+Konfigurasi URL websocket terletak pada `.env` dengan nilai `WS-URL-JS` untuk _frontend_ (contoh: `ws://localhost:8095`) dan `WS-URL-PHP` untuk _backend_ (contoh: `http://localhost:3010/notify`).
 
 Jika Anda menjalankannya di peladen pribadi virtual (VPS) dengan SSL, gunakan `wss://alamatdomain.com/ws/` pada `WS-URL-JS` dan `https://alamatdomain.com/notify/` pada `WS-URL-PHP`. Pastikan Anda membuat hos virtual atau peladen proksi sesuai dengan peladen web yang Anda gunakan.
 
@@ -30,7 +30,7 @@ Contoh untuk nginx:
 
 ```
 location /ws/ {
-   proxy_pass http://127.0.0.1:8090;
+   proxy_pass http://127.0.0.1:8095;
    proxy_http_version 1.1;
    proxy_set_header Upgrade $http_upgrade;
    proxy_set_header Connection "upgrade";
@@ -43,7 +43,7 @@ location /ws/ {
 }
 
 location /notify/ {
-   proxy_pass http://127.0.0.1:3000/notify;
+   proxy_pass http://127.0.0.1:3010/notify;
    proxy_http_version 1.1;
    proxy_set_header Connection "";
    proxy_set_header Host $host;
@@ -56,8 +56,8 @@ Agar websocket berjalan dengan baik (Linux):
 
 1. Izinkan port agar bisa menggunakan websocket dengan perintah sebagai berikut:
    ```
-   sudo ufw allow 8090/tcp
-   sudo ufw allow 3000/tcp
+   sudo ufw allow 8095/tcp
+   sudo ufw allow 3010/tcp
    ```
 2. Instal `pm2` dengan perintah sebagai berikut (gunakan `sudo` atau masuk sebagai root):
    ```
@@ -99,14 +99,11 @@ Untuk menyiapkan aplikasi PWA:
 
 ## Peran Pengguna
 
-Ada 4 peran pengguna yang digunakan pada aplikasi ini:
+Ada 3 peran pengguna yang digunakan pada aplikasi ini:
 
-1. **Admin**: digunakan untuk mengelola semua hal dalam aplikasi ini dengan akses eksklusif untuk mengelola pengguna dan sesinya serta membuat kata sandi transaksi untuk pembatalan transaksi.
-2. **Admisi**: digunakan untuk mengelola pasien dan mendaftarkan pasien untuk rawat jalan.
-3. **Apoteker**: digunakan untuk mengelola stok obat, resep eksternal, dan mencetak e-tiket serta dokumen resep dari resep dokter yang telah dikonfirmasi.
-4. **Dokter**: digunakan untuk memberikan diagnosis, tindakan, resep obat, dan resep kacamata yang diberikan kepada pasien, serta membuat surat perintah kamar operasi, laporan rawat jalan, dan laporan-laporan operasi.
-5. **Kasir**: digunakan untuk mengelola tindakan dan melakukan transaksi atas tindakan dan obat-obatan.
-6. **Perawat**: digunakan untuk memberikan asesmen, skrining, edukasi, dan pemeriksaan penunjang kepada pasien.
+1. **Admin**: digunakan untuk mengelola semua hal dalam aplikasi ini (kecuali membuat dan memanggil nomor antrean) dengan akses eksklusif untuk mengelola pengguna dan sesinya serta membuat kata sandi transaksi untuk pembatalan transaksi.
+2. **Satpam**: digunakan untuk membuat dan mencetak nomor antrean.
+3. **Admisi**: digunakan untuk memanggil dan mengatur status nomor antrean.
 
 ## Perubahan Penting dengan index.php
 
@@ -163,9 +160,9 @@ Aplikasi ini digunakan untuk:
 
 Kode sumber aplikasi ini dilisensikan di bawah Lisensi MIT
 
-# Management Information System of Main Eye Clinic of Padang Eye Center Teluk Kuantan
+# Queue System of Main Eye Clinic of Padang Eye Center Teluk Kuantan
 
-**Management Information System of Main Eye Clinic of Padang Eye Center Teluk Kuantan Application** is a system used to fulfill business processes at the Main Eye Clinic Padang Eye Center Teluk Kuantan. This system manages patients, outpatients, electronic medical records (under development), medicine stock, medicine prescriptions, and transactions. This application is based on [HWPweb Admin Template](https://github.com/hafizulwanandaputra/hwpweb-admin-template) which is also based on [CodeIgniter 4](https://github.com/codeigniter4/appstarter).
+**Queue System of Main Eye Clinic of Padang Eye Center Teluk Kuantan Application** is a system used to process the queue of patients seeking treatment at the Main Eye Clinic Padang Eye Center Teluk Kuantan. This system can create, print, call, and set queue number status. This application is based on [HWPweb Admin Template](https://github.com/hafizulwanandaputra/hwpweb-admin-template) which is also based on [CodeIgniter 4](https://github.com/codeigniter4/appstarter).
 
 ## Installation
 
@@ -177,8 +174,8 @@ Kode sumber aplikasi ini dilisensikan di bawah Lisensi MIT
 
 1. Copy `.env.example` to `.env` and tailor for this app, specifically the `requestURL` and the database settings.
 2. Create MySQL database that matches with database name specified in `.env` file.
-3. Use the `pectk-simklinik-no-data.sql.gz` file in this repository to import the tables into the database.
-4. Run `php spark db:seed User` and `php spark db:seed PwdTransaksi` to seed the database items.
+3. Use the `pectk-antrean-no-data.sql.gz` file in this repository to import the tables into the database.
+4. Run `php spark db:seed User` to seed the database items.
 5. For use with PHP development server, run `php spark serve` to start the server. Usually [http://localhost:8080](http://localhost:8080). You can use different port by using `php spark serve --port 8081`. Replace `8081` with the desired port number. You need to modify `requestURL` in `.env` to match with the desired port number.
 6. For use without PHP development server such as Apache or Nginx, just open it from URL like [http://localhost/pectk-farmasi](http://localhost/pectk-farmasi) or others based on your web server's configuration. You need to modify `requestURL` in `.env` to match with the desired URL address.
    > The base URL is based on PHP's `$_SERVER['SERVER_NAME']` value. You just need to change the `requestURL` which consists of the port and the subfolder (if the app is stored in a subfolder).
@@ -187,7 +184,7 @@ Kode sumber aplikasi ini dilisensikan di bawah Lisensi MIT
 
 ### Websocket
 
-The websocket URL configuration is located in `.env` with the values ​​`WS-URL-JS` for the frontend (example: `ws://localhost:8090`) and `WS-URL-PHP` for the backend (example: `http://localhost:3000/notify`).
+The websocket URL configuration is located in `.env` with the values ​​`WS-URL-JS` for the frontend (example: `ws://localhost:8095`) and `WS-URL-PHP` for the backend (example: `http://localhost:3010/notify`).
 
 If you are running on a virtual private server (VPS) with SSL, use `wss://domainaddress.com/ws/` for `WS-URL-JS` and `https://domainaddress.com/notify/` for `WS-URL-PHP`. Make sure you create a virtual host or proxy server that matches the web server you are using.
 
@@ -195,7 +192,7 @@ Example for nginx:
 
 ```
 location /ws/ {
-   proxy_pass http://127.0.0.1:8090;
+   proxy_pass http://127.0.0.1:8095;
    proxy_http_version 1.1;
    proxy_set_header Upgrade $http_upgrade;
    proxy_set_header Connection "upgrade";
@@ -208,7 +205,7 @@ location /ws/ {
 }
 
 location /notify/ {
-   proxy_pass http://127.0.0.1:3000/notify;
+   proxy_pass http://127.0.0.1:3010/notify;
    proxy_http_version 1.1;
    proxy_set_header Connection "";
    proxy_set_header Host $host;
@@ -221,8 +218,8 @@ To make websocket work properly (Linux):
 
 1. Allow the port to use websocket with the following command:
    ```
-   sudo ufw allow 8090/tcp
-   sudo ufw allow 3000/tcp
+   sudo ufw allow 8095/tcp
+   sudo ufw allow 3010/tcp
    ```
 2. Install `pm2` with the following command (use `sudo` or log in as root):
    ```
@@ -264,14 +261,11 @@ To set up PWA application:
 
 ## User Roles
 
-There are 4 user roles used on this application:
+There are 3 user roles used on this application:
 
-1. **Admin**: is used to manage everything of this application with exclusively access to manage users and its sessions and generating transaction password for transaction cancellation.
-2. **Medical Records**: used to manage patients and register patients for outpatient care.
-3. **Pharmacist**: is used to manage medicine stocks, external prescriptions, and printing e-ticket and prescription document from confirmed doctor prescriptions.
-4. **Doctor**: is used to provide diagnoses, procedures, medicine prescriptions, and eyeglass prescriptions given to patients, as well as to create surgery room orders, outpatient reports, and surgical reports.
-5. **Cashier**: is used to manage actions and making transaction of the actions and medicines.
-6. **Nurse**: is used to provide assessment, screening, education, and supporting checks to patients.
+1. **Admin**: is used to manage everything of this application (except creating and calling queue numbers) with exclusively access to manage users and its sessions and generating transaction password for transaction cancellation.
+2. **Security**: used to create and print queue number.
+3. **Admission**: used to call and set queue number status.
 
 ## Important Change with index.php
 

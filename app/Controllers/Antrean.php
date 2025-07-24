@@ -98,6 +98,54 @@ class Antrean extends BaseController
         }
     }
 
+    public function selesai_antrean($id)
+    {
+        // Memeriksa peran pengguna, hanya 'Admin' dan 'Admisi' yang diizinkan
+        if (session()->get('role') == 'Admin' || session()->get('role') == 'Admisi') {
+            $db = db_connect(); // Menghubungkan ke database
+            // Data yang akan diupdate
+            $data = [
+                'loket' => session()->get('fullname'),
+                'status' => 'SUDAH DIPANGGIL'
+            ];
+            // Mengubah status dan mengisi nama loket
+            $db->table('antrean')->set($data)->where('id_antrean', $id)->update();
+            // Panggil WebSocket untuk update client
+            $this->notify_clients();
+            // Mengembalikan respons JSON sukses
+            return $this->response->setJSON(['success' => true, 'message' => 'Antrean sudah selesai dipanggil']);
+        } else {
+            // Jika bukan admin, mengembalikan status 404 dengan pesan error
+            return $this->response->setStatusCode(404)->setJSON([
+                'error' => 'Halaman tidak ditemukan',
+            ]);
+        }
+    }
+
+    public function batal_antrean($id)
+    {
+        // Memeriksa peran pengguna, hanya 'Admin' dan 'Admisi' yang diizinkan
+        if (session()->get('role') == 'Admin' || session()->get('role') == 'Admisi') {
+            $db = db_connect(); // Menghubungkan ke database
+            // Data yang akan diupdate
+            $data = [
+                'loket' => session()->get('fullname'),
+                'status' => 'BATAL'
+            ];
+            // Mengubah status dan mengisi nama loket
+            $db->table('antrean')->set($data)->where('id_antrean', $id)->update();
+            // Panggil WebSocket untuk update client
+            $this->notify_clients();
+            // Mengembalikan respons JSON sukses
+            return $this->response->setJSON(['success' => true, 'message' => 'Antrean dibatalkan']);
+        } else {
+            // Jika bukan admin, mengembalikan status 404 dengan pesan error
+            return $this->response->setStatusCode(404)->setJSON([
+                'error' => 'Halaman tidak ditemukan',
+            ]);
+        }
+    }
+
     public function notify_clients()
     {
         $client = \Config\Services::curlrequest();

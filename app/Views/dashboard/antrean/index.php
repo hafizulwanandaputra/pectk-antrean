@@ -89,23 +89,37 @@
             </nav>
         </div>
     </div>
-    <div class="modal modal-sheet p-4 py-md-5 fade" id="addModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" role="dialog">
+    <div class="modal modal-sheet p-4 py-md-5 fade" id="completeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content bg-body-tertiary rounded-5 shadow-lg transparent-blur">
-                <?= form_open_multipart('/pasien/create', 'id="addForm"'); ?>
                 <div class="modal-body p-4">
-                    <h5 id="addMessage"></h5>
-                    <h6 class="mb-0 fw-normal" id="addSubmessage"></h6>
-                    <div class="row gy-2 pt-4">
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-lg btn-primary bg-gradient fs-6 mb-0 rounded-4" id="confirmAddBtn">Tambah Pasien</button>
+                    <h5 class="mb-0" id="completeMessage"></h5>
+                    <div class="row gx-2 pt-4">
+                        <div class="col d-grid">
+                            <button type="button" class="btn btn-lg btn-body bg-gradient fs-6 mb-0 rounded-4" data-bs-dismiss="modal">Jangan Selesaikan</button>
                         </div>
-                        <div class="d-grid">
-                            <button type="button" class="btn btn-lg btn-body bg-gradient fs-6 mb-0 rounded-4" data-bs-dismiss="modal">Batal</button>
+                        <div class="col d-grid">
+                            <button type="submit" class="btn btn-lg btn-primary bg-gradient fs-6 mb-0 rounded-4" id="confirmCompleteBtn">Selesaikan</button>
                         </div>
                     </div>
                 </div>
-                <?= form_close(); ?>
+            </div>
+        </div>
+    </div>
+    <div class="modal modal-sheet p-4 py-md-5 fade" id="cancelModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-body-tertiary rounded-5 shadow-lg transparent-blur">
+                <div class="modal-body p-4">
+                    <h5 class="mb-0" id="cancelMessage"></h5>
+                    <div class="row gx-2 pt-4">
+                        <div class="col d-grid">
+                            <button type="button" class="btn btn-lg btn-body bg-gradient fs-6 mb-0 rounded-4" data-bs-dismiss="modal">Jangan Batalkan</button>
+                        </div>
+                        <div class="col d-grid">
+                            <button type="submit" class="btn btn-lg btn-danger bg-gradient fs-6 mb-0 rounded-4" id="confirmCancelBtn">Batalkan</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -145,7 +159,7 @@
                 $('#no-data-alert').show();
             } else {
                 data.antrean.forEach(function(antrean) {
-                    const loket = antrean.loket ? `${pasien.loket}` : `<em>Belum ada loket</em>`;
+                    const loket = antrean.loket ? `${antrean.loket}` : `<em>Belum ada loket</em>`;
                     let status = antrean.status;
                     if (status === 'BELUM DIPANGGIL') {
                         status = `<span class="badge text-bg-warning">${antrean.status}</span>`;
@@ -153,6 +167,24 @@
                         status = `<span class="badge text-bg-success">${antrean.status}</span>`;
                     } else if (status === 'BATAL') {
                         status = `<span class="badge text-bg-danger">${antrean.status}</span>`;
+                    }
+                    let call_status = antrean.status;
+                    if (call_status === 'BELUM DIPANGGIL') {
+                        call_status = ``;
+                    } else {
+                        call_status = `disabled`;
+                    }
+                    let selesai_status = antrean.status;
+                    if (selesai_status === 'BELUM DIPANGGIL') {
+                        selesai_status = ``;
+                    } else {
+                        selesai_status = `disabled`;
+                    }
+                    let batal_status = antrean.status;
+                    if (batal_status === 'BATAL' || batal_status === 'SUDAH DIPANGGIL') {
+                        batal_status = `disabled`;
+                    } else {
+                        batal_status = ``;
                     }
                     const antreanElement = `
                         <div class="col">
@@ -171,13 +203,13 @@
                                 <div class="card-footer">
                                     <div class="d-grid gap-2">
                                         <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.kode_antrean}-${antrean.nomor_antrean}">
+                                            <button type="button" class="btn btn-primary btn-sm bg-gradient btn-call" data-id="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${call_status}>
                                                 Panggil
                                             </button>
-                                            <button type="button" class="btn btn-success btn-sm bg-gradient btn-complete" data-id="${antrean.id_antrean}">
+                                            <button type="button" class="btn btn-success btn-sm bg-gradient btn-complete" data-id="${antrean.id_antrean}" data-name="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${call_status}>
                                                 Selesai
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm bg-gradient btn-cancel" data-id="${antrean.id_antrean}">
+                                            <button type="button" class="btn btn-danger btn-sm bg-gradient btn-cancel" data-id="${antrean.id_antrean}" data-name="${antrean.kode_antrean}-${antrean.nomor_antrean}" ${batal_status}>
                                                 Batal
                                             </button>
                                         </div>
@@ -299,6 +331,8 @@
     }
 
     $(document).ready(async function() {
+        var id;
+        var antrean;
         const socket = new WebSocket('<?= env('WS-URL-JS') ?>'); // Ganti dengan domain VPS
 
         socket.onopen = () => {
@@ -376,6 +410,57 @@
             }
 
             speechSynthesis.speak(utterance);
+        });
+
+        // Menampilkan modal untuk menyelesaikan antrean
+        $(document).on('click', '.btn-complete', function() {
+            id = $(this).data('id'); // Mengambil ID antrean
+            antrean = $(this).data('name'); // Mengambil nomor antrean
+            $('[data-bs-toggle="tooltip"]').tooltip('hide'); // Menyembunyikan tooltip
+            $('#completeMessage').html(`Selesaikan antrean <span class="text-nowrap">${antrean}</span>?`); // Menampilkan pesan konfirmasi
+            $('#completeModal').modal('show'); // Menampilkan modal
+        });
+
+        // Menampilkan modal untuk membatalkan antrean
+        $(document).on('click', '.btn-cancel', function() {
+            id = $(this).data('id'); // Mengambil ID antrean
+            antrean = $(this).data('name'); // Mengambil nomor antrean
+            $('[data-bs-toggle="tooltip"]').tooltip('hide'); // Menyembunyikan tooltip
+            $('#cancelMessage').html(`Batalkan antrean <span class="text-nowrap">${antrean}</span>?`); // Menampilkan pesan konfirmasi
+            $('#cancelModal').modal('show'); // Menampilkan modal
+        });
+
+        // Konfirmasi selesaikan antrean
+        $('#confirmCompleteBtn').click(async function() {
+            $('#completeModal button').prop('disabled', true); // Menonaktifkan tombol konfirmasi
+            $(this).html(`<?= $this->include('spinner/spinner'); ?> Selesaikan`); // Menampilkan pesan loading
+
+            try {
+                await axios.post(`<?= base_url('/antrean/selesai_antrean') ?>/${id}`); // Mengaktifkan pengguna
+                fetchAntrean();
+            } catch (error) {
+                showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error); // Menampilkan pesan kesalahan
+            } finally {
+                $('#completeModal').modal('hide'); // Menyembunyikan modal aktivasi
+                $(this).text(`Selesaikan`); // Mengembalikan teks tombol asal
+            }
+        });
+
+        // Konfirmasi batalkan antrean
+        $('#confirmCancelBtn').click(async function() {
+            $('#cancelModal button').prop('disabled', true); // Menonaktifkan tombol konfirmasi
+            $(this).html(`<?= $this->include('spinner/spinner'); ?> Batalkan`); // Menampilkan pesan loading
+
+            try {
+                await axios.post(`<?= base_url('/antrean/batal_antrean') ?>/${id}`); // Menonaktifkan pengguna
+                fetchAntrean();
+            } catch (error) {
+                showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error); // Menampilkan pesan kesalahan
+            } finally {
+                $('#cancelModal').modal('hide'); // Menyembunyikan modal nonaktif
+                $('#cancelModal button').prop('disabled', false); // Mengembalikan status tombol
+                $(this).text(`Batalkan`); // Mengembalikan teks tombol asal
+            }
         });
 
         // Panggil fungsi untuk mengambil data pasien saat dokumen siap

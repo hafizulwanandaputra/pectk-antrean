@@ -362,6 +362,7 @@ $db = db_connect();
             $('.cetak-btn, #listAntreanCloseBtn, #refreshButton, #length-menu, #externalSearch, #clearTglButton').prop('disabled', true);
             $('.pagination .page-item:not(.previous):not(.next)').addClass('disabled');
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?>`);
+            $('[data-bs-toggle="tooltip"]').tooltip('hide');
 
             $('tr .sorting').css('pointer-events', 'none');
 

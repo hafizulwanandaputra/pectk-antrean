@@ -333,6 +333,7 @@ $db = db_connect();
 
             // Tampilkan loading di tombol cetak
             const $btn = $(this);
+            $('.btn-apply').prop('disabled', true);
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Silakan tunggu...`);
 
             // Muat PDF ke iframe
@@ -347,6 +348,7 @@ $db = db_connect();
                 } catch (e) {
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
+                    $('.btn-apply').prop('disabled', false);
                     // Kembalikan tampilan tombol cetak
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
                 }
@@ -357,7 +359,11 @@ $db = db_connect();
 
             // Tampilkan loading di tombol cetak
             const $btn = $(this);
+            $('.cetak-btn, #listAntreanCloseBtn, #refreshButton, #length-menu, #externalSearch, #clearTglButton').prop('disabled', true);
+            $('.pagination .page-item:not(.previous):not(.next)').addClass('disabled');
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?>`);
+
+            $('tr .sorting').css('pointer-events', 'none');
 
             // Muat PDF ke iframe
             var iframe = $('#print_frame');
@@ -372,7 +378,10 @@ $db = db_connect();
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
                     // Kembalikan tampilan tombol cetak
+                    $('.cetak-btn, #listAntreanCloseBtn, #refreshButton, #length-menu, #externalSearch, #clearTglButton').prop('disabled', false);
+                    $('.pagination .page-item:not(.previous):not(.next)').removeClass('disabled');
                     $btn.prop('disabled', false).html('<i class="fa-solid fa-print"></i>');
+                    $('tr .sorting').css('pointer-events', 'auto');
                 }
             });
         });
@@ -380,9 +389,11 @@ $db = db_connect();
             ə.preventDefault();
             const jaminan = $(this).data('name');
             const $btn = $(this);
-            $btn.prop('disabled', true).html(`
+            $('.btn-apply').prop('disabled', true);
+            $btn.html(`
                 <?= $this->include('spinner/spinner'); ?> Tunggu...
             `);
+            $('#antrean_sukses').hide();
 
             try {
                 const response = await axios.post(`<?= base_url('/home/buat_antrean') ?>?jaminan=${jaminan}`);
@@ -411,7 +422,8 @@ $db = db_connect();
             } catch (error) {
                 showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
             } finally {
-                $btn.prop('disabled', false).html(`
+                $('.btn-apply').prop('disabled', false);
+                $btn.html(`
                     Buat Antrean
                 `);
             }

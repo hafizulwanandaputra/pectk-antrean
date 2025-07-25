@@ -470,6 +470,7 @@
                 showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error); // Menampilkan pesan kesalahan
             } finally {
                 $('#completeModal').modal('hide'); // Menyembunyikan modal aktivasi
+                $('#completeModal button').prop('disabled', false); // Mengembalikan status tombol
                 $(this).text(`Selesaikan`); // Mengembalikan teks tombol asal
             }
         });

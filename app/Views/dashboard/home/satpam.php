@@ -4,6 +4,10 @@ $db = db_connect();
 <?= $this->extend('dashboard/templates/dashboard'); ?>
 <?= $this->section('css'); ?>
 <style>
+    .main-content-inside {
+        margin-left: 0px;
+    }
+
     .ratio-onecol {
         --bs-aspect-ratio: 33%;
     }
@@ -21,11 +25,15 @@ $db = db_connect();
 <?= $this->endSection(); ?>
 <?= $this->section('title'); ?>
 <div class="d-flex justify-content-start align-items-center">
-    <span class="fw-medium fs-5 flex-fill text-truncate"><?= $headertitle; ?></span>
+    <div class="flex-fill text-truncate">
+        <div class="d-flex flex-column">
+            <div class="fw-medium fs-6 lh-sm" id="tanggal"></div>
+            <div class="fw-medium lh-sm date" id="waktu" style="font-size: 0.75em;"></div>
+        </div>
+    </div>
     <div id="loadingSpinner" class="px-2">
         <?= $this->include('spinner/spinner'); ?>
     </div>
-    <a id="hideSuccessAlert" class="fs-6 mx-2 text-success-emphasis" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Sembunyikan info nomor antrean" style="display: none;"><i class="fa-solid fa-chevron-up"></i></a>
 </div>
 <div style="min-width: 1px; max-width: 1px;"></div>
 <?= $this->endSection(); ?>
@@ -50,12 +58,12 @@ $db = db_connect();
                 <div class="col">
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center py-1">
-                            <div style="font-size: 3em;"><i class="fa-solid fa-users"></i></div>
-                            <div class="fs-6 fw-bold">UMUM</div>
+                            <div style="font-size: 80pt;"><i class="fa-solid fa-users"></i></div>
+                            <div class="fs-5 fw-bold">UMUM</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="UMUM">
+                                <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="UMUM">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -65,14 +73,14 @@ $db = db_connect();
                 <div class="col">
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center py-1">
-                            <div style="font-size: 3em;">
+                            <div style="font-size: 80pt;">
                                 <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
                             </div>
-                            <div class="fs-6 fw-bold">BPJS KESEHATAN</div>
+                            <div class="fs-5 fw-bold">BPJS KESEHATAN</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="BPJS KESEHATAN">
+                                <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="BPJS KESEHATAN">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -82,12 +90,12 @@ $db = db_connect();
                 <div class="col">
                     <div class="card h-100 rounded-4">
                         <div class="card-body text-center py-1">
-                            <div style="font-size: 3em;"><i class="fa-solid fa-user-shield"></i></div>
-                            <div class="fs-6 fw-bold">ASURANSI</div>
+                            <div style="font-size: 80pt;"><i class="fa-solid fa-user-shield"></i></div>
+                            <div class="fs-5 fw-bold">ASURANSI</div>
                         </div>
                         <div class="card-footer">
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary bg-gradient rounded-4 btn-apply" data-name="ASURANSI">
+                                <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="ASURANSI">
                                     Buat Antrean
                                 </button>
                             </div>
@@ -95,16 +103,6 @@ $db = db_connect();
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="alert alert-success text-center rounded-top-4 rounded-bottom-5" role="alert" id="antrean_sukses" style="display: none; font-size: 0.75em;">
-            <p class="mb-0">Nomor antrean Anda adalah:</p>
-            <h1 class="mb-0 fw-light" id="antrean"></h1>
-            <p class="mb-0">Jaminan: <span id="nama_jaminan"></span></p>
-            <p>Tanggal dan waktu: <span id="tanggal_antrean"></span></p>
-            <div class="d-grid gap-2">
-                <button type="button" class="btn btn-success bg-gradient rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
-            </div>
-            <iframe id="print_frame" style="display: none;"></iframe>
         </div>
         <div class="d-grid gap-2 mb-3">
             <button type="button" class="btn btn-body bg-gradient rounded-4" id="list_antrean_btn" data-bs-toggle="modal" data-bs-target="#listAntreanModal">Lihat Nomor Antrean Sebelumnya</button>
@@ -151,6 +149,28 @@ $db = db_connect();
             </div>
         </div>
     </div>
+    <div class="modal modal-sheet p-4 py-md-5 fade" id="printModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-body-tertiary rounded-5 shadow-lg transparent-blur">
+                <div class="modal-body p-4">
+                    <p class="mb-0">Nomor antrean Anda adalah:</p>
+                    <h1 class="mb-0 fw-medium" id="antrean"></h1>
+                    <p class="mb-0">Jaminan: <span id="nama_jaminan"></span></p>
+                    <p>Tanggal dan waktu: <span id="tanggal_antrean"></span></p>
+                    <p class="mb-0">Nomor antrean ini akan dicetak secara otomatis. Jika tidak, klik "Cetak Nomor Antrean" untuk mencetaknya lagi.</p>
+                    <iframe id="print_frame" style="display: none;"></iframe>
+                    <div class="row gy-2 pt-4">
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-lg btn-primary bg-gradient fs-6 mb-0 rounded-4" id="cetak-btn">Cetak Nomor Antrean</button>
+                        </div>
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-lg btn-body bg-gradient fs-6 mb-0 rounded-4" id="closeModalBtn" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 <?= $this->endSection(); ?>
 <?= $this->section('javascript'); ?>
@@ -169,6 +189,15 @@ $db = db_connect();
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
 <script>
+    // Aktifkan plugin dan set locale ke Bahasa Indonesia
+    dayjs.extend(dayjs_plugin_localizedFormat);
+    dayjs.locale('id');
+
+    function updateDateTime() {
+        const now = dayjs();
+        $('#tanggal').text(now.format('dddd, D MMMM YYYY'));
+        $('#waktu').text(now.format('HH.mm.ss'));
+    }
     $(document).ready(async function() {
         var table = $('#tabel').DataTable({
             "oLanguage": {
@@ -334,9 +363,8 @@ $db = db_connect();
             const $btn = $(`#cetak-btn`);
 
             // Tampilkan loading di tombol cetak
-            $('.btn-apply').prop('disabled', true);
-            $('#hideSuccessAlert').hide();
-            $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Silakan tunggu...`);
+            $('#closeModalBtn').prop('disabled', true);
+            $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Mencetak. Silakan tunggu...`);
 
             // Muat PDF ke iframe
             var iframe = $('#print_frame');
@@ -350,8 +378,7 @@ $db = db_connect();
                 } catch (e) {
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
-                    $('.btn-apply').prop('disabled', false);
-                    $('#hideSuccessAlert').show();
+                    $('#closeModalBtn').prop('disabled', false);
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
                 }
             });
@@ -401,7 +428,6 @@ $db = db_connect();
             $btn.html(`
                 <?= $this->include('spinner/spinner'); ?> Tunggu...
             `);
-            $('#antrean_sukses').hide();
 
             try {
                 const response = await axios.post(`<?= base_url('/home/buat_antrean') ?>?jaminan=${jaminan}`);
@@ -423,12 +449,12 @@ $db = db_connect();
                 });
                 const data = response.data.data;
                 await Promise.all([
-                    $('#antrean_sukses').show(),
                     $('#antrean').text(data.antrean),
                     $('#nama_jaminan').text(data.nama_jaminan),
                     $('#tanggal_antrean').text(data.tanggal_antrean),
-                    $('#cetak-btn').attr('data-id', data.id_antrean)
+                    $('#cetak-btn').attr('data-id', data.id_antrean),
                 ]);
+                $('#printModal').modal('show');
                 cetakAntrean(data.id_antrean);
             } catch (error) {
                 showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);
@@ -439,16 +465,15 @@ $db = db_connect();
                 `);
             }
         });
-        $('#hideSuccessAlert').on('click', async function(ə) {
-            ə.preventDefault();
-            $('#antrean_sukses').hide();
-            $('#hideSuccessAlert').hide();
+        $('#printModal').on('hidden.bs.modal', function() {
             $('#cetak-btn').attr('data-id', '');
             $('#antrean').text('');
             $('#nama_jaminan').text('');
             $('#tanggal_antrean').text('');
         });
         $('#loadingSpinner').hide();
+        updateDateTime(); // Jalankan sekali saat load
+        setInterval(updateDateTime, 1000); // Update tiap 1 detik
     });
 </script>
 <?= $this->endSection(); ?>

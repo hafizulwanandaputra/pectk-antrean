@@ -37,6 +37,9 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/localizedFormat.js"></script>
     <script>
         flatpickr.localize(flatpickr.l10ns.id);
     </script>
@@ -487,13 +490,15 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
     <div class="wrapper">
         <!-- HEADER -->
         <header class="navbar sticky-top flex-md-nowrap p-0 shadow-sm bg-success-subtle text-success-emphasis border-bottom border-success-subtle header">
-            <div id="sidebarHeader" class="d-flex justify-content-center align-items-center me-0 px-3 py-md-1" style="min-height: 48px; max-height: 48px;">
-                <span class="navbar-brand mx-0 text-start text-md-center lh-sm d-flex justify-content-center align-items-center" style="font-size: 7.5pt;">
-                    <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="24px">
-                    <div class="ps-2 text-start text-success-emphasis fw-bold">PADANG EYE CENTER<br>TELUK KUANTAN</div>
-                </span>
-            </div>
-            <button type="button" class="btn btn-outline-success bg-gradient d-md-none mx-3" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+            <?php if (!(session()->get('role') == "Satpam" && $activeSegment === 'home')) : ?>
+                <div id="sidebarHeader" class="d-flex justify-content-center align-items-center me-0 px-3 py-md-1" style="min-height: 48px; max-height: 48px;">
+                    <span class="navbar-brand mx-0 text-start lh-sm d-flex justify-content-center align-items-center" style="font-size: 7.5pt;">
+                        <img src="<?= base_url('/assets/images/pec-klinik-logo.png'); ?>" alt="KLINIK MATA PECTK" height="24px">
+                        <div class="ps-2 text-start text-success-emphasis fw-bold">PADANG EYE CENTER<br>TELUK KUANTAN</div>
+                    </span>
+                </div>
+                <button type="button" class="btn btn-outline-success bg-gradient d-md-none mx-3" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation"><i class="fa-solid fa-bars"></i></button>
+            <?php endif; ?>
             <div class="d-flex w-100 align-items-center text-truncate" style="min-height: 48px; max-height: 48px;">
                 <div class="w-100 ps-3 pe-1 pe-lg-2 text-truncate" style="flex: 1; min-width: 0;">
                     <?= $this->renderSection('title'); ?>
@@ -620,52 +625,54 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
 
         <!-- CONTENTS -->
         <div class="main-content-wrapper">
-            <nav id="sidebarMenu" class="d-md-block sidebar bg-body-secondary shadow-sm collapse transparent-blur">
-                <div id="sidebarMenu2" class="position-sticky sidebar-sticky p-1">
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'home') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/home'); ?>">
-                                <div class="d-flex align-items-start <?= ($activeSegment === 'home') ? 'text-white' : 'link-success' ?>">
-                                    <div style="min-width: 24px; max-width: 24px; text-align: center;">
-                                        <i class="fa-solid fa-house"></i>
-                                    </div>
-                                    <div class="flex-fill mx-2 <?= ($activeSegment === 'home') ? 'text-white' : 'link-body-emphasis' ?>">
-                                        Beranda
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
+            <?php if (!(session()->get('role') == "Satpam" && $activeSegment === 'home')) : ?>
+                <nav id="sidebarMenu" class="d-md-block sidebar bg-body-secondary shadow-sm collapse transparent-blur">
+                    <div id="sidebarMenu2" class="position-sticky sidebar-sticky p-1">
+                        <ul class="nav nav-pills flex-column">
                             <li class="nav-item">
-                                <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'antrean') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/antrean'); ?>">
-                                    <div class="d-flex align-items-start <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-success' ?>">
+                                <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'home') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/home'); ?>">
+                                    <div class="d-flex align-items-start <?= ($activeSegment === 'home') ? 'text-white' : 'link-success' ?>">
                                         <div style="min-width: 24px; max-width: 24px; text-align: center;">
-                                            <i class="fa-solid fa-user-large"></i>
+                                            <i class="fa-solid fa-house"></i>
                                         </div>
-                                        <div class="flex-fill mx-2 <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-body-emphasis' ?>">
-                                            Antrean
+                                        <div class="flex-fill mx-2 <?= ($activeSegment === 'home') ? 'text-white' : 'link-body-emphasis' ?>">
+                                            Beranda
                                         </div>
                                     </div>
                                 </a>
                             </li>
-                        <?php endif; ?>
-                        <?php if (session()->get('role') == "Admin") : ?>
-                            <li class="nav-item">
-                                <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'admin') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/admin'); ?>">
-                                    <div class="d-flex align-items-start <?= ($activeSegment === 'admin') ? 'text-white' : 'link-success' ?>">
-                                        <div style="min-width: 24px; max-width: 24px; text-align: center;">
-                                            <i class="fa-solid fa-users"></i>
+                            <?php if (session()->get('role') == "Admin" || session()->get('role') == "Admisi") : ?>
+                                <li class="nav-item">
+                                    <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'antrean') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/antrean'); ?>">
+                                        <div class="d-flex align-items-start <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-success' ?>">
+                                            <div style="min-width: 24px; max-width: 24px; text-align: center;">
+                                                <i class="fa-solid fa-user-large"></i>
+                                            </div>
+                                            <div class="flex-fill mx-2 <?= ($activeSegment === 'antrean') ? 'text-white' : 'link-body-emphasis' ?>">
+                                                Antrean
+                                            </div>
                                         </div>
-                                        <div class="flex-fill mx-2 <?= ($activeSegment === 'admin') ? 'text-white' : 'link-body-emphasis' ?>">
-                                            Pengguna
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                            <?php if (session()->get('role') == "Admin") : ?>
+                                <li class="nav-item">
+                                    <a style="font-size: 0.95em;" class="nav-link px-2 py-1 <?= ($activeSegment === 'admin') ? 'active bg-success activeLinkSideBar' : '' ?>" href=" <?= base_url('/admin'); ?>">
+                                        <div class="d-flex align-items-start <?= ($activeSegment === 'admin') ? 'text-white' : 'link-success' ?>">
+                                            <div style="min-width: 24px; max-width: 24px; text-align: center;">
+                                                <i class="fa-solid fa-users"></i>
+                                            </div>
+                                            <div class="flex-fill mx-2 <?= ($activeSegment === 'admin') ? 'text-white' : 'link-body-emphasis' ?>">
+                                                Pengguna
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
-            </nav>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                </nav>
+            <?php endif; ?>
             <main class="main-content">
                 <?= $this->renderSection('content'); ?>
             </main>

@@ -434,7 +434,7 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
 
         @media (max-width: 767.98px) {
             .toast-container {
-                padding-top: 7rem !important;
+                padding-top: <?= (!(session()->get('role') == "Satpam" && $activeSegment === 'home')) ? '7rem' : '4rem' ?> !important;
                 transform: translateX(-50%) !important;
                 left: 50% !important;
             }

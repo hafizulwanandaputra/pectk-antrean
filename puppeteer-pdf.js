@@ -21,13 +21,16 @@ function findChromePath() {
   }
 
   if (platform === "darwin") {
-    const macPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+    const macPath =
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
     if (fs.existsSync(macPath)) return macPath;
   }
 
   if (platform === "linux") {
     try {
-      const chrome = execSync("which google-chrome || which chromium || which chromium-browser")
+      const chrome = execSync(
+        "which google-chrome || which chromium || which chromium-browser"
+      )
         .toString()
         .trim();
       if (fs.existsSync(chrome)) return chrome;
@@ -100,21 +103,25 @@ console.log("📦 Menggunakan browser:", chromePath);
     try {
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
-        console.log(`📁 Folder dibuat: ${outputDir}`);
       }
 
-      console.log(`📄 Menerima permintaan PDF: ${outputPath}`);
       await cluster.execute({ html, outputFilename: outputPath, paper });
 
       if (!fs.existsSync(outputPath)) {
-        console.error("❌ File PDF tidak ditemukan setelah diproses.");
-        return res.status(500).json({ success: false, error: "PDF tidak berhasil dibuat" });
+        return res.status(500).json({
+          success: false,
+          error: "PDF tidak ditemukan setelah proses selesai.",
+          path: outputPath,
+        });
       }
 
       res.json({ success: true, file: filename });
     } catch (err) {
-      console.error("🔥 Terjadi kesalahan saat membuat PDF:", err);
-      res.status(500).json({ success: false, error: err.message });
+      res.status(500).json({
+        success: false,
+        error: err.message,
+        stack: err.stack,
+      });
     }
   });
 

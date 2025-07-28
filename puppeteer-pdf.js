@@ -3,7 +3,52 @@ const bodyParser = require("body-parser");
 const { Cluster } = require("puppeteer-cluster");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
+const { execSync } = require("child_process");
 
+// 🔍 Cari path Chrome/Chromium berdasarkan OS
+function findChromePath() {
+  const platform = os.platform();
+
+  if (platform === "win32") {
+    const candidates = [
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+    ];
+    for (const chromePath of candidates) {
+      if (fs.existsSync(chromePath)) return chromePath;
+    }
+  }
+
+  if (platform === "darwin") {
+    const macPath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+    if (fs.existsSync(macPath)) return macPath;
+  }
+
+  if (platform === "linux") {
+    try {
+      const chrome = execSync("which google-chrome || which chromium || which chromium-browser")
+        .toString()
+        .trim();
+      if (fs.existsSync(chrome)) return chrome;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+const chromePath = findChromePath();
+
+if (!chromePath) {
+  console.error("❌ Tidak bisa menemukan Google Chrome atau Chromium.");
+  process.exit(1);
+}
+
+console.log("📦 Menggunakan browser:", chromePath);
+
+// 🚀 Mulai cluster Puppeteer
 (async () => {
   const app = express();
   app.use(bodyParser.json({ limit: "10mb" }));
@@ -13,16 +58,17 @@ const path = require("path");
     maxConcurrency: 4,
     puppeteerOptions: {
       headless: "new",
+      executablePath: chromePath,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     },
   });
 
+  // 🎯 Tugas membuat PDF dari HTML
   await cluster.task(async ({ page, data }) => {
     try {
       const { html, outputFilename, paper = {} } = data;
 
       console.log(`⚙️ Membuat PDF di ${outputFilename}`);
-
       await page.setContent(html, { waitUntil: "networkidle0" });
 
       const pdfOptions = {
@@ -38,7 +84,6 @@ const path = require("path");
       }
 
       await page.pdf(pdfOptions);
-
       console.log(`✅ Selesai: ${outputFilename}`);
     } catch (err) {
       console.error("🛑 Gagal membuat PDF:", err);
@@ -46,35 +91,32 @@ const path = require("path");
     }
   });
 
+  // 🌐 Endpoint HTTP untuk menerima HTML dan merespon nama file PDF
   app.post("/generate-pdf", async (req, res) => {
     const { html, filename, paper } = req.body;
     const outputDir = path.join(__dirname, "writable/temp/");
     const outputPath = path.join(outputDir, filename);
 
     try {
-      // Buat folder jika belum ada
       if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
         console.log(`📁 Folder dibuat: ${outputDir}`);
       }
 
-      console.log(`📄 Membuat PDF di: ${outputPath}`);
-
+      console.log(`📄 Menerima permintaan PDF: ${outputPath}`);
       await cluster.execute({ html, outputFilename: outputPath, paper });
 
       if (!fs.existsSync(outputPath)) {
-        console.error("❌ PDF tidak ditemukan setelah cluster.execute");
-        return res
-          .status(500)
-          .json({ success: false, error: "PDF tidak berhasil dibuat" });
+        console.error("❌ File PDF tidak ditemukan setelah diproses.");
+        return res.status(500).json({ success: false, error: "PDF tidak berhasil dibuat" });
       }
 
       res.json({ success: true, file: filename });
     } catch (err) {
-      console.error("🔥 Error saat membuat PDF:", err);
+      console.error("🔥 Terjadi kesalahan saat membuat PDF:", err);
       res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  app.listen(3002, () => console.log("PDF Worker listening on port 3002"));
+  app.listen(3002, () => console.log("🚀 PDF Worker listening on port 3002"));
 })();

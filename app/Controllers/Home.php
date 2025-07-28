@@ -263,27 +263,31 @@ class Home extends BaseController
 
     public function cetak_antrean($id)
     {
-        if (session()->get('role') == 'Satpam') {
-            // Ambil data antrean
-            $db = \Config\Database::connect();
-            $builder = $db->table('antrean');
-            $builder->where('id_antrean', $id);
-            $antrean = $builder->get()->getRowArray();
+        if (session()->get('role') !== 'Satpam') {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
 
-            if (!$antrean) {
-                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-            }
+        // Ambil data antrean
+        $db = \Config\Database::connect();
+        $builder = $db->table('antrean');
+        $builder->where('id_antrean', $id);
+        $antrean = $builder->get()->getRowArray();
 
-            // Siapkan HTML dari view
-            $data = [
-                'antrean' => $antrean,
-                'title' => 'Cetak Antrean - ' . $this->systemName,
-                'agent' => $this->request->getUserAgent()
-            ];
-            $client = \Config\Services::curlrequest();
-            $html = view('dashboard/home/struk', $data);
-            $filename = 'antrean.pdf';
+        if (!$antrean) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
 
+        // Siapkan HTML dari view
+        $data = [
+            'antrean' => $antrean,
+            'title' => 'Cetak Antrean - ' . $this->systemName,
+            'agent' => $this->request->getUserAgent()
+        ];
+        $client = \Config\Services::curlrequest();
+        $html = view('dashboard/home/struk', $data);
+        $filename = 'antrean.pdf';
+
+        try {
             $response = $client->post(env('PDF-URL'), [
                 'headers' => ['Content-Type' => 'application/json'],
                 'json' => [
@@ -291,7 +295,7 @@ class Home extends BaseController
                     'filename' => $filename,
                     'paper' => [
                         'width' => '80mm',
-                        'height' => '300mm', // bisa kamu ubah sesuai kebutuhan
+                        'height' => '300mm',
                     ]
                 ]
             ]);
@@ -301,18 +305,26 @@ class Home extends BaseController
             if (isset($result['success']) && $result['success']) {
                 $path = WRITEPATH . 'temp/' . $result['file'];
 
-                // Kembalikan file PDF ke browser (stream)
+                if (!is_file($path)) {
+                    return $this->response
+                        ->setStatusCode(500)
+                        ->setBody("PDF berhasil dibuat tapi file tidak ditemukan: $path");
+                }
+
                 return $this->response
                     ->setHeader('Content-Type', 'application/pdf')
                     ->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"')
                     ->setBody(file_get_contents($path));
             } else {
+                $errorMessage = $result['error'] ?? 'Tidak diketahui';
                 return $this->response
                     ->setStatusCode(500)
-                    ->setBody('Gagal membuat PDF');
+                    ->setBody("Gagal membuat PDF: " . esc($errorMessage));
             }
-        } else {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        } catch (\Exception $e) {
+            return $this->response
+                ->setStatusCode(500)
+                ->setBody("Kesalahan saat request ke PDF worker: " . esc($e->getMessage()));
         }
     }
 

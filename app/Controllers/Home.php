@@ -264,7 +264,7 @@ class Home extends BaseController
     public function cetak_antrean($id)
     {
         if (session()->get('role') == 'Satpam') {
-            // Ambil antrean dengan join ke jaminan
+            // Ambil data antrean
             $db = \Config\Database::connect();
             $builder = $db->table('antrean');
             $builder->where('id_antrean', $id);
@@ -274,13 +274,43 @@ class Home extends BaseController
                 throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
             }
 
+            // Siapkan HTML dari view
             $data = [
                 'antrean' => $antrean,
                 'title' => 'Cetak Antrean - ' . $this->systemName,
                 'agent' => $this->request->getUserAgent()
             ];
+            $client = \Config\Services::curlrequest();
+            $html = view('dashboard/home/struk', $data);
+            $filename = 'antrean.pdf';
 
-            return view('dashboard/home/struk', $data);
+            $response = $client->post(env('PDF-URL'), [
+                'headers' => ['Content-Type' => 'application/json'],
+                'json' => [
+                    'html' => $html,
+                    'filename' => $filename,
+                    'paper' => [
+                        'width' => '80mm',
+                        'height' => '300mm', // bisa kamu ubah sesuai kebutuhan
+                    ]
+                ]
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+
+            if (isset($result['success']) && $result['success']) {
+                $path = WRITEPATH . 'temp/' . $result['file'];
+
+                // Kembalikan file PDF ke browser (stream)
+                return $this->response
+                    ->setHeader('Content-Type', 'application/pdf')
+                    ->setHeader('Content-Disposition', 'inline; filename="' . $filename . '"')
+                    ->setBody(file_get_contents($path));
+            } else {
+                return $this->response
+                    ->setStatusCode(500)
+                    ->setBody('Gagal membuat PDF');
+            }
         } else {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }

@@ -56,12 +56,12 @@ $db = db_connect();
         <div class="mb-3">
             <div class="row row-cols-1 row-cols-lg-3 g-3">
                 <div class="col">
-                    <div class="card h-100 rounded-4">
+                    <div class="card h-100 rounded-5">
                         <div class="card-body text-center py-1">
                             <div style="font-size: 80pt;"><i class="fa-solid fa-users"></i></div>
                             <div class="fs-5 fw-bold">UMUM</div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer rounded-bottom-5 p-3">
                             <div class="d-grid gap-2">
                                 <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="UMUM">
                                     Buat Antrean
@@ -71,14 +71,14 @@ $db = db_connect();
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card h-100 rounded-4">
+                    <div class="card h-100 rounded-5">
                         <div class="card-body text-center py-1">
                             <div style="font-size: 80pt;">
                                 <?= file_get_contents(FCPATH . 'assets/images/logo-bpjs.svg') ?>
                             </div>
                             <div class="fs-5 fw-bold">BPJS KESEHATAN</div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer rounded-bottom-5 p-3">
                             <div class="d-grid gap-2">
                                 <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="BPJS KESEHATAN">
                                     Buat Antrean
@@ -88,12 +88,12 @@ $db = db_connect();
                     </div>
                 </div>
                 <div class="col">
-                    <div class="card h-100 rounded-4">
+                    <div class="card h-100 rounded-5">
                         <div class="card-body text-center py-1">
                             <div style="font-size: 80pt;"><i class="fa-solid fa-user-shield"></i></div>
                             <div class="fs-5 fw-bold">ASURANSI</div>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer rounded-bottom-5 p-3">
                             <div class="d-grid gap-2">
                                 <button type="button" class="btn btn-lg btn-primary bg-gradient rounded-4 btn-apply" data-name="ASURANSI">
                                     Buat Antrean

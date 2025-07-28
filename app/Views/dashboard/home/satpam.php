@@ -189,6 +189,8 @@ $db = db_connect();
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
 <script>
+    let countdownTimer = null; // Untuk menyimpan referensi timer agar bisa dibatalkan
+
     // Aktifkan plugin dan set locale ke Bahasa Indonesia
     dayjs.extend(dayjs_plugin_localizedFormat);
     dayjs.locale('id');
@@ -360,32 +362,66 @@ $db = db_connect();
         });
 
         function cetakAntrean(id) {
-            const $btn = $(`#cetak-btn`);
+            const $btn = $('#cetak-btn');
+            const $closeBtn = $('#closeModalBtn');
+            const $iframe = $('#print_frame');
+
+            // Batalkan countdown sebelumnya jika ada
+            if (countdownTimer !== null) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+                $closeBtn.text('Tutup');
+            }
 
             // Tampilkan loading di tombol cetak
-            $('#closeModalBtn').prop('disabled', true);
+            $closeBtn.prop('disabled', true).text('Tutup');
             $btn.prop('disabled', true).html(`<?= $this->include('spinner/spinner'); ?> Mencetak. Silakan tunggu...`);
 
             // Muat PDF ke iframe
-            var iframe = $('#print_frame');
-            iframe.attr('src', `<?= base_url("home/cetak_antrean") ?>/${id}`);
+            $iframe.attr('src', `<?= base_url("home/cetak_antrean") ?>/${id}`);
 
-            // Saat iframe selesai memuat, jalankan print
-            iframe.off('load').on('load', function() {
+            // Saat iframe selesai dimuat
+            $iframe.off('load').on('load', function() {
                 try {
                     this.contentWindow.focus();
                     this.contentWindow.print();
+
+                    // Setelah berhasil, mulai countdown 5 detik untuk tutup modal
+                    let countdown = 5;
+                    $closeBtn.text(`Menutup dalam ${countdown} detik`);
+
+                    countdownTimer = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            $closeBtn.text(`Menutup dalam ${countdown} detik`);
+                        } else {
+                            clearInterval(countdownTimer);
+                            countdownTimer = null;
+                            $('#printModal').modal('hide');
+                            $closeBtn.text('Tutup');
+                        }
+                    }, 1000);
+
                 } catch (e) {
                     showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
                 } finally {
-                    $('#closeModalBtn').prop('disabled', false);
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
+                    $closeBtn.prop('disabled', false);
                 }
             });
         }
 
+        // Pemicu klik tombol cetak
         $('#cetak-btn').on('click', function() {
             const id = $(this).data('id');
+
+            // Jika sedang menghitung mundur, batalkan
+            if (countdownTimer !== null) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+                $('#closeModalBtn').text('Tutup');
+            }
+
             cetakAntrean(id);
         });
         $(document).on('click', '.cetak-btn', function() {
@@ -470,6 +506,12 @@ $db = db_connect();
             $('#antrean').text('');
             $('#nama_jaminan').text('');
             $('#tanggal_antrean').text('');
+            // Jika sedang menghitung mundur, batalkan
+            if (countdownTimer !== null) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+                $('#closeModalBtn').text('Tutup');
+            }
         });
         $('#loadingSpinner').hide();
         updateDateTime(); // Jalankan sekali saat load

@@ -490,7 +490,7 @@ $db = db_connect();
                     $('#tanggal_antrean').text(data.tanggal_antrean),
                     $('#cetak-btn').attr('data-id', data.id_antrean),
                 ]);
-                $('#printModal').modal('show');
+                await $('#printModal').modal('show');
                 cetakAntrean(data.id_antrean);
             } catch (error) {
                 showFailedToast('Terjadi kesalahan. Silakan coba lagi.<br>' + error);

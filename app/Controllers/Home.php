@@ -280,35 +280,7 @@ class Home extends BaseController
                 'agent' => $this->request->getUserAgent()
             ];
 
-            // Simpan HTML ke file sementara
-            $htmlFile = WRITEPATH . 'temp/output-struk.html';
-            file_put_contents($htmlFile, view('dashboard/home/struk', $data));
-
-            // Tentukan path output PDF
-            $pdfFile = WRITEPATH . 'temp/output-struk.pdf';
-
-            // Jalankan Puppeteer untuk konversi HTML ke PDF
-            // Keterangan: "node " . ROOTPATH . "puppeteer-pdf.js $htmlFile $pdfFile panjang lebar marginAtas margin Kanan marginBawah marginKiri"
-            // Silakan lihat puppeteer-pdf.js di root projectt untuk keterangan lebih lanjut.
-            $command = env('CMD-ENV') . "node " . ROOTPATH . "puppeteer-pdf.js $htmlFile $pdfFile 80mm 100mm 0.1cm 0.82cm 0.1cm 0.82cm 2>&1";
-            $output = shell_exec($command);
-
-            // Hapus file HTML setelah eksekusi
-            @unlink($htmlFile);
-
-            // Jika tidak ada output, langsung stream PDF
-            if (!$output) {
-                return $this->response
-                    ->setHeader('Content-Type', 'application/pdf')
-                    ->setHeader('Content-Disposition', 'inline; filename="' . $antrean['nomor_antrean'] . '-' . $antrean['tanggal_antrean'] . 'pdf"')
-                    ->setBody(file_get_contents($pdfFile));
-            }
-
-            // Jika ada output (kemungkinan error), kembalikan HTTP 500 dengan <pre>
-            return $this->response
-                ->setStatusCode(500)
-                ->setHeader('Content-Type', 'text/html')
-                ->setBody('<pre>' . htmlspecialchars($output) . '</pre>');
+            return view('dashboard/home/struk', $data);
         } else {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }

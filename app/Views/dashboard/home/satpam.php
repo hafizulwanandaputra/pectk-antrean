@@ -403,7 +403,7 @@ $db = db_connect();
                     }, 1000);
 
                 } catch (e) {
-                    showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
+                    showFailedToast(`<p>Pencetakan otomatis tidak dapat dilakukan</p><p class="mb-0">${e}</p>`);
                 } finally {
                     $btn.prop('disabled', false).html('Cetak Nomor Antrean');
                     $closeBtn.prop('disabled', false);
@@ -446,7 +446,7 @@ $db = db_connect();
                     this.contentWindow.focus();
                     this.contentWindow.print();
                 } catch (e) {
-                    showFailedToast("Peramban memblokir pencetakan otomatis. Harap izinkan pop-up atau pastikan file berasal dari domain yang sama.");
+                    showFailedToast(`<p>Pencetakan otomatis tidak dapat dilakukan</p><p class="mb-0">${e}</p>`);
                 } finally {
                     // Kembalikan tampilan tombol cetak
                     $('.cetak-btn, #listAntreanCloseBtn, #refreshButton, #length-menu, #externalSearch, #clearTglButton').prop('disabled', false);

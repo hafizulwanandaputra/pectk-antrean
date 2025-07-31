@@ -10,8 +10,8 @@
             @page {
                 margin-top: 0.1cm;
                 margin-bottom: 0.1cm;
-                margin-left: 0.82cm;
-                margin-right: 0.82cm;
+                margin-left: 0cm;
+                margin-right: 0cm;
             }
         }
 

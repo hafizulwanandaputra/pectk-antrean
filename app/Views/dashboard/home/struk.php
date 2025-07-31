@@ -8,19 +8,10 @@
     <style>
         @media print {
             @page {
-                size: 80mm 300mm;
                 margin-top: 0.1cm;
                 margin-bottom: 0.1cm;
                 margin-left: 0.82cm;
                 margin-right: 0.82cm;
-            }
-
-            body {
-                margin: 0;
-                padding-top: 0;
-                padding-bottom: 0;
-                padding-left: 2px;
-                padding-right: 2px;
             }
         }
 

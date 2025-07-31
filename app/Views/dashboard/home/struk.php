@@ -35,7 +35,7 @@
 
         .box {
             border: 1px solid black;
-            height: 1cm;
+            height: 0.7cm;
             overflow: hidden;
             padding: 0cm;
             font-size: 7pt;
@@ -109,17 +109,6 @@
                         </td>
                         <td style="width: 75%; vertical-align: top; padding-top: 0; padding-bottom: 0; padding-left: 0.1cm; padding-right: 0.1cm;">
                             <div style="white-space: nowrap;"><?= $antrean['tanggal_antrean'] ?></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 25%; vertical-align: top; padding-top: 0; padding-bottom: 0; padding-left: 0.1cm; padding-right: 0.1cm;">
-                            <div style="white-space: nowrap;">Satpam</div>
-                        </td>
-                        <td style="width: 0%; vertical-align: top; padding-top: 0; padding-bottom: 0; padding-left: 0.1cm; padding-right: 0.1cm;">
-                            <div style="white-space: nowrap;">:</div>
-                        </td>
-                        <td style="width: 75%; vertical-align: top; padding-top: 0; padding-bottom: 0; padding-left: 0.1cm; padding-right: 0.1cm;">
-                            <div style="white-space: nowrap;"><?= $antrean['satpam'] ?></div>
                         </td>
                     </tr>
                 </tbody>

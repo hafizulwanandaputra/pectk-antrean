@@ -294,7 +294,7 @@ class Home extends BaseController
                     'html' => $html,
                     'filename' => $filename,
                     'paper' => [
-                        'width' => '72mm',
+                        'width' => '45mm',
                         'height' => '250mm',
                     ]
                 ]

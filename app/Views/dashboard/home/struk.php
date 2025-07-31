@@ -17,7 +17,7 @@
 
         body {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 7.8pt;
+            font-size: 6pt;
             line-height: 1.2;
         }
 
@@ -30,21 +30,21 @@
             padding-top: 0;
             margin-bottom: 0;
             padding-bottom: 0;
-            font-size: 8pt;
+            font-size: 7pt;
         }
 
         .box {
             border: 1px solid black;
-            height: 1.2cm;
+            height: 1cm;
             overflow: hidden;
             padding: 0cm;
-            font-size: 8.5pt;
+            font-size: 7pt;
         }
 
         .tindakan {
             width: 100%;
             border-collapse: collapse;
-            font-size: 7.5pt;
+            font-size: 6pt;
         }
 
         .tindakan td:nth-child(1),

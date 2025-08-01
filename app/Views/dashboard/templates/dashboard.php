@@ -25,10 +25,6 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" rel="stylesheet">
     <link href="<?= base_url(); ?>assets_public/fonts/IosevkaHwpMono/IosevkaHwpMono.css" rel="stylesheet">
-    <link href="<?= base_url(); ?>assets_public/fonts/roboto/stylesheet.css" rel="stylesheet">
-    <link href="<?= base_url(); ?>assets_public/fonts/noto-sans-lgc/stylesheet.css" rel="stylesheet">
-    <link href="<?= base_url(); ?>assets_public/fonts/noto-sans-lgc-mono/stylesheet.css" rel="stylesheet">
-    <link href="<?= base_url(); ?>assets_public/fonts/noto-sans-arabic/stylesheet.css" rel="stylesheet">
     <link href="<?= base_url(); ?>assets_public/fontawesome/css/all.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -211,20 +207,13 @@ $activeSegment = $uri->getSegment(1); // Get the first segment
     </script>
     <style>
         :root {
-            --bs-font-sans-serif: Roboto, "Noto Sans", "Noto Sans Arabic", system-ui, -apple-system, "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
-            --bs-font-monospace: "Iosevka HWP Mono Web", Menlo, Monaco, Consolas, "Courier New", "Liberation Mono", monospace;
+            --bs-font-monospace: "Iosevka HWP Mono Web", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             --gold: #ffe680;
             /* Emas lebih terang */
             --silver: #bfbfbf;
             /* Perak lebih terang */
             --bronze: #e7bd98;
             /* Perunggu lebih terang */
-        }
-
-        @supports (font-variation-settings: normal) {
-            :root {
-                --bs-font-sans-serif: "Roboto Variable", "Noto Sans", "Noto Sans Arabic", system-ui, -apple-system, "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
-            }
         }
 
         /* Warna untuk tema gelap */
